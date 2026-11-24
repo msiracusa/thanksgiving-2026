@@ -17,10 +17,16 @@ th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; vertical
 th { background: #f0e9dc; }
 ul.check { list-style: none; padding-left: 4px; }
 ul.check li { margin-bottom: 6px; }
+ul.done { list-style: none; padding-left: 4px; color: #999; }
+ul.done li { margin-bottom: 4px; }
+ul.done li::before { content: "\2611  "; color: #7fa36b; }
 ul.check li::before { content: "\2610  "; }
 .note { background: #f7f0df; padding: 10px 12px; border-left: 4px solid #b58b50; margin: 10px 0; }
 .warn { background: #fdeaea; padding: 10px 12px; border-left: 4px solid #c0392b; margin: 10px 0; }
 .time { font-weight: bold; color: #70432d; white-space: nowrap; }
+.stat { font-size: 0.8em; color: #999; }
+.stat.have { color: #7fa36b; }
+.stat.need { color: #a08c7a; }
 .chef { color: #777; font-size: 0.9em; font-style: italic; margin: -6px 0 10px; }
 .recipe { border-top: 1px dashed #ccc; margin-top: 18px; padding-top: 6px; }
 @media print { body { background: white; margin: 0; } nav { display: none; } section { break-inside: avoid; } }
@@ -36,23 +42,24 @@ ul.check li::before { content: "\2610  "; }
 <section id="menu">
 <h2>1. Menu</h2>
 <table>
-<tr><th>Course</th><th>Dish</th><th>Details</th><th>Chef</th></tr>
-<tr><td rowspan="4">Appetizers</td><td><strong>Antipasto</strong></td><td>Charcuterie, cheddar, Italian and Spanish cheeses, olives, and marinated artichokes</td><td>Ana</td></tr>
-<tr><td><strong>Caprese</strong></td><td>Fresh mozzarella, tomato, and basil</td><td>Ana</td></tr>
-<tr><td><strong>Italian Bread</strong></td><td>Focaccia or other Italian bread</td><td>Ana</td></tr>
-<tr><td><strong>Minestrone</strong></td><td>Milan style, with macaroni and Pecorino Romano on the side</td><td>Michael</td></tr>
-<tr><td rowspan="2">Main</td><td><strong>Glazed Ham</strong></td><td>Brown sugar glaze</td><td>Leo</td></tr>
-<tr><td><strong>Roast Turkey Breast</strong></td><td>Dry-brined with orange, peppercorns, and herbs, served with gravy</td><td>Michael</td></tr>
-<tr><td rowspan="7">Sides</td><td><strong>Stuffing</strong></td><td>Country white bread, golden raisins, and Granny Smith apples</td><td>Anthony</td></tr>
-<tr><td><strong>Mashed Potatoes</strong></td><td>Yukon Gold, butter, and milk</td><td>Carmine</td></tr>
-<tr><td><strong>Green Beans</strong></td><td>Olive oil and butter</td><td>Dominic</td></tr>
-<tr><td><strong>Cranberry Sauce</strong></td><td>Chilled, from the can</td><td>Dominic</td></tr>
-<tr><td><strong>Citrus Salad</strong></td><td>Greens, cucumber, and carrot with a lemon and olive oil dressing</td><td>Michael</td></tr>
-<tr><td><strong>Cornbread</strong></td><td>Store-bought, warmed in the oven</td><td>Michael</td></tr>
-<tr><td><strong>Kimchi</strong></td><td>On the side</td><td>Halmoni</td></tr>
-<tr><td rowspan="2">Dessert</td><td><strong>Roasted Chestnuts</strong></td><td>Fresh chestnuts, roasted in the oven</td><td>Dominic</td></tr>
-<tr><td><strong>Pies and Other Desserts</strong></td><td>Brought by guests</td><td>Guests</td></tr>
+<tr><th>Course</th><th>Dish</th><th>Details</th><th>Chef</th><th>Ingredients</th></tr>
+<tr><td rowspan="4">Appetizers</td><td><strong>Antipasto</strong></td><td>Charcuterie, cheddar, Italian and Spanish cheeses, olives, and marinated artichokes</td><td>Ana</td><td class="stat need">still need more charcuterie</td></tr>
+<tr><td><strong>Caprese</strong></td><td>Fresh mozzarella, tomato, and basil</td><td>Ana</td><td class="stat need">still need mozzarella, basil, olive oil, flaky salt</td></tr>
+<tr><td><strong>Italian Bread</strong></td><td>Focaccia or other Italian bread</td><td>Ana</td><td class="stat">&mdash;</td></tr>
+<tr><td><strong>Minestrone</strong></td><td>Milan style, with macaroni and Pecorino Romano on the side</td><td>Michael</td><td class="stat need">still need carrots, olive oil</td></tr>
+<tr><td rowspan="2">Main</td><td><strong>Glazed Ham</strong></td><td>Three Boar's Head Sweet Slice hams (one apple wood smoked) with a brown sugar glaze</td><td>Leo</td><td class="stat have" title="Have everything">&#10003;</td></tr>
+<tr><td><strong>Roast Turkey Breast</strong></td><td>Dry-brined with baking powder, orange zest, and herbs, served with gravy</td><td>Michael</td><td class="stat need">still need kosher salt, baking powder</td></tr>
+<tr><td rowspan="7">Sides</td><td><strong>Stuffing</strong></td><td>Country white bread, golden raisins, and Granny Smith apples</td><td>Anthony</td><td class="stat need">still need bread, butter</td></tr>
+<tr><td><strong>Mashed Potatoes</strong></td><td>Yukon Gold, butter, and milk</td><td>Carmine</td><td class="stat need">still need butter, milk</td></tr>
+<tr><td><strong>Green Beans</strong></td><td>Olive oil and butter</td><td>Dominic</td><td class="stat need">still need olive oil, butter</td></tr>
+<tr><td><strong>Cranberry Sauce</strong></td><td>Chilled, from the can</td><td>Dominic</td><td class="stat have" title="Have everything">&#10003;</td></tr>
+<tr><td><strong>Citrus Salad</strong></td><td>Greens, cucumber, and carrot with a lemon and olive oil dressing</td><td>Michael</td><td class="stat need">still need greens, carrots, olive oil, sugar</td></tr>
+<tr><td><strong>Cornbread</strong></td><td>Muffin-size, baked from box mix and warmed before serving</td><td>Michael</td><td class="stat need">still need eggs, milk, butter</td></tr>
+<tr><td><strong>Kimchi</strong></td><td>On the side</td><td>Halmoni</td><td class="stat">&mdash;</td></tr>
+<tr><td rowspan="2">Dessert</td><td><strong>Roasted Chestnuts</strong></td><td>Fresh chestnuts, roasted in the oven</td><td>Dominic</td><td class="stat have" title="Have everything">&#10003;</td></tr>
+<tr><td><strong>Pies and Other Desserts</strong></td><td>Brought by guests</td><td>Guests</td><td class="stat">&mdash;</td></tr>
 </table>
+<p class="stat">Ingredients: &#10003; means everything for the dish is bought. Otherwise it lists what is still on the shopping list (as of the Monday shopping trip).</p>
 <div class="note"><strong>Oven note:</strong> the plan assumes your <strong>double oven</strong> (bottom 26x15x20.6 in; top 26x10.1x19.1 in).</div>
 <div class="note"><strong>Allergy note (kids):</strong> tree nuts and peanuts (chestnuts are OK), green peas, and lentils. &ldquo;May contain nuts&rdquo; is OK. Check ingredient lists for nuts, peas, lentils, and pea protein (stock, bread, cornbread, ham glaze, and anything guests bring). Ask Ana and Halmoni about nuts (pistachios in salami, pine nuts in pesto or kimchi).</div>
 </section>
@@ -60,39 +67,49 @@ ul.check li::before { content: "\2610  "; }
 <!-- ===================== SHOPPING ===================== -->
 <section id="shopping">
 <h2>2. Shopping List</h2>
-<p>Organized by store, then by department. The store split is my suggestion, so move items as you like. Quantities are for 18 people. Ana brings the bread and Halmoni brings the kimchi. Guests will bring dessert.</p>
+<p>Quantities are for 18 people. Organized by store, then by department. Ana brings the bread and Halmoni brings the kimchi. Guests will bring dessert. Everything already bought is in the Purchased section at the bottom.</p>
 <p class="note">Stuffing items are bought for <strong>4x</strong> the recipe. The recipe section and plan use 3x (3 pans). The extra is a cushion. Read ingredient lists for nuts, peas, and lentils (&ldquo;may contain nuts&rdquo; is OK).</p>
 
-<h2>Costco</h2>
+<h2>Still to Buy</h2>
 
 <h3>Meat and Charcuterie</h3>
 <ul class="check">
-<li><strong>Ham</strong>: fully cooked bone-in or spiral, 8-10 lb (Kirkland spiral ham). Check the glaze packet if included.</li>
-<li><strong>Charcuterie meats, a variety</strong>: about 2 1/2 lb total (salami, prosciutto, soppressata, chorizo, and so on). <strong>No pistachios</strong> (check mortadella).</li>
+<li><strong>More charcuterie meats</strong>: about 1 to 1 1/4 lb in two or three kinds, such as prosciutto (about 6 oz), capicola (6-8 oz), and soppressata or chorizo (6-8 oz). That brings the total to about 2 lb with the pepperoni and Genoa salami. <strong>No pistachios</strong> (check mortadella).</li>
 </ul>
 
 <h3>Dairy and Cheese</h3>
 <ul class="check">
-<li>Salted butter: about 13 sticks in total (4 potatoes, 6 stuffing, 2 turkey and gravy, 1 spare). A 4 lb Kirkland pack covers it. Salted butter also works for the table.</li>
+<li>Salted butter: about 13 sticks in total (4 potatoes, 6 stuffing, 2 gravy, 1 spare). A 4 lb pack covers it. Salted butter also works for the table.</li>
 <li>Whole milk, 1/2 gallon (or cream)</li>
-<li>Cheddar cheese block, about 1 1/2 lb, to cut into slices or cubes (the kids will probably prefer this)</li>
-<li>Italian and Spanish cheeses, about 1 1/2 lb total for the antipasto (for example Parmigiano-Reggiano, provolone, or Asiago, plus Manchego or another Spanish cheese). Choose plain wedges, with no nuts coating or in the cheese.</li>
+<li>Eggs, 4 for the cornbread (2 per box mix). A half dozen covers it.</li>
 <li>Pre-sliced fresh mozzarella, about 1 1/2 lb</li>
 </ul>
 
 <h3>Produce</h3>
 <ul class="check">
-<li>Yukon Gold potatoes, 8-9 lb for mashing, plus 6 medium for soup</li>
 <li>Carrots, 10 total (6 soup, 4 salad). A 5 lb bag covers it.</li>
-<li>Lemons, 4 (3 for the salad dressing, 1 optional for the beans)</li>
-<li>Cucumbers, 4</li>
 <li>Spring mix, about 2 lb (two 1 lb tubs). If you use romaine instead, buy 4 large hearts.</li>
+<li>Arugula, 1 large container (mixed into the spring mix)</li>
+<li>Fresh basil, 2 large bunches or clamshells</li>
+</ul>
+
+<h3>Spices</h3>
+<ul class="check">
+<li>Kosher salt (Diamond Crystal, 1 box: about 3-4 tbsp for the turkey, plus extra for cooking)</li>
+<li>Baking powder, aluminum-free, small can (1 tbsp for the turkey)</li>
+<li>Flaky salt (caprese)</li>
+</ul>
+
+<h3>Bakery and Bread</h3>
+<ul class="check">
+<li>Country white bread, 4 loaves (toasted and cubed for the stuffing)</li>
+<li>Italian bread (ciabatta or baguette, 1-2 loaves) and crackers, optional, in case Ana's bread is not enough</li>
 </ul>
 
 <h3>Pantry</h3>
 <ul class="check">
 <li>Olive oil, a large bottle (soup, beans, salad), plus extra-virgin for the caprese</li>
-<li>Low-sodium or unsalted stock, about 2 qt for the gravy and turkey pan, plus 2-3 qt for the soup (or use water). The stuffing needs none. <strong>Check for pea protein.</strong></li>
+<li>Sugar (salad dressing)</li>
 </ul>
 
 <h3>Supplies</h3>
@@ -100,76 +117,52 @@ ul.check li::before { content: "\2610  "; }
 <li>Heavy-duty foil, plastic wrap, large zip bags, paper towels</li>
 <li>Disposable foil pans, if you want them (3 x 9x13 for the stuffing)</li>
 <li>Toothpicks</li>
-</ul>
-
-<h2>Wegmans</h2>
-
-<h3>Meat</h3>
-<ul class="check">
-<li><strong>Bone-in turkey breasts, 2</strong> (6-7 lb each). You will split each breast lengthwise into 2 halves yourself (see the turkey recipe), or the butcher can do it. Costco usually has whole birds and boneless breasts, so buy these at Wegmans.</li>
-</ul>
-
-<h3>Dairy and Cheese</h3>
-<ul class="check">
-<li>Unsalted butter, 1 package (4 sticks). Use it for the turkey rub, and anywhere you want to control the salt.</li>
-<li>Locatelli Pecorino Romano, pre-grated, about 8 oz (for the table, so guests can add it to their soup)</li>
-</ul>
-
-<h3>Produce</h3>
-<ul class="check">
-<li>Onions: 3 for soup, 4 medium for stuffing (buys 4x), 1 extra</li>
-<li>Celery: 9 stalks for soup, 8 large stalks for stuffing (about 2 bunches)</li>
-<li>Zucchini, 6</li>
-<li>Green cabbage, 1 small head (you use 3/4)</li>
-<li>Garlic, 1 head</li>
-<li>Green beans, 4 lb</li>
-<li>Granny Smith apples, 4</li>
-<li>Oranges, 2 (zest for the dry brine)</li>
-<li>Arugula, 1 large container (mixed into the spring mix)</li>
-<li>Tomatoes for the caprese, about 2 lb (4-5 large, or 2 pints of cherry or grape tomatoes)</li>
-<li>Fresh basil, 2 large bunches or clamshells</li>
-<li>Fresh chestnuts, 2-3 lb (you roast these after dinner)</li>
-</ul>
-
-<h3>Fresh Herbs and Spices</h3>
-<ul class="check">
-<li>Fresh herbs: parsley, thyme, sage, rosemary (2-3 bunches total)</li>
-<li>Black peppercorns</li>
-<li>Kosher salt (Diamond Crystal, 1 box: about 1/4 cup for the turkey, plus extra for cooking), flaky salt (caprese), black pepper</li>
-<li>Ground sage (stuffing)</li>
-</ul>
-
-<h3>Bakery and Bread</h3>
-<ul class="check">
-<li>Country white bread, 4 loaves (toasted and cubed for the stuffing)</li>
-<li>Cornbread, ready-made, to heat up: enough for 18 (about 2 dozen pieces or 2 pans). Check the ingredient list.</li>
-<li>Italian bread (ciabatta or baguette, 1-2 loaves) and crackers, optional, in case Ana's bread is not enough</li>
-</ul>
-
-<h3>Pantry and Canned</h3>
-<ul class="check">
-<li>Olives: a mix from the olive bar, or 1 jar black and 1 jar green, about 1-1 1/2 lb total. Choose pitted, with no nut stuffing.</li>
-<li>Marinated artichoke hearts, 2 jars (about 12 oz each)</li>
-<li>Canned cranberry sauce, 3 cans</li>
-<li>Elbow macaroni, 1 lb</li>
-<li>Tomato paste</li>
-<li>Golden raisins, about 2 cups</li>
-<li>All-purpose flour (gravy)</li>
-<li>Brown sugar, 1 1/2 cups, and Dijon mustard or honey (ham glaze)</li>
-<li>Sugar (salad dressing)</li>
-</ul>
-
-<h2>Either Store or Elsewhere</h2>
-<ul class="check">
 <li>A rimmed half-sheet pan (18x13 in) and wire rack for the dry-brined turkey, if you don't have them</li>
 <li>Any missing pans or equipment from the Equipment section</li>
 </ul>
 
-<h2>Brought by Others</h2>
+<h3>Brought by Others</h3>
 <ul class="check">
 <li>Ana: bread (focaccia or other Italian bread)</li>
 <li>Halmoni: kimchi</li>
 <li>Dessert: guests will bring it</li>
+</ul>
+
+<h2>Purchased</h2>
+<ul class="done">
+<li>Cheddar, 2 different blocks (about 0.8 lb each)</li>
+<li>Provolone, Pecorino Romano, fontina, and Manchego (about 0.6 lb each)</li>
+<li>Pepperoni and Genoa salami (7 oz each, to slice)</li>
+<li>Boar's Head Sweet Slice hams, 3 (about 3.25 lb each; one is apple wood smoked)</li>
+<li>Fresh bone-in turkey breasts, 2 (about 6 lb each)</li>
+<li>Cornbread mix, 2 boxes (serves about 20 total)</li>
+<li>Low-sodium or unsalted stock, about 4-5 qt (check for pea protein)</li>
+<li>Unsalted butter, 1 package (4 sticks)</li>
+<li>Locatelli Pecorino Romano, pre-grated, about 8 oz</li>
+<li>Yukon Gold potatoes, 8-9 lb plus 6 medium for soup</li>
+<li>Green beans, 4 lb</li>
+<li>Onions, 8 (3 soup, 4 stuffing, 1 extra)</li>
+<li>Celery, 17 stalks (about 2 bunches)</li>
+<li>Zucchini, 6</li>
+<li>Cucumbers, 4</li>
+<li>Lemons, 4</li>
+<li>Green cabbage, 1 small head</li>
+<li>Garlic, 1 head</li>
+<li>Granny Smith apples, 4</li>
+<li>Oranges, 2</li>
+<li>Tomatoes for the caprese, about 2 lb</li>
+<li>Fresh chestnuts, 2-3 lb</li>
+<li>Fresh herbs: parsley, thyme, sage, rosemary (2-3 bunches total)</li>
+<li>Black pepper and black peppercorns</li>
+<li>Golden raisins, about 2 cups</li>
+<li>Brown sugar, 1 1/2 cups</li>
+<li>Dijon mustard or honey</li>
+<li>All-purpose flour</li>
+<li>Elbow macaroni, 1 lb</li>
+<li>Tomato paste</li>
+<li>Canned cranberry sauce, 3 cans</li>
+<li>Marinated artichoke hearts, 2 jars</li>
+<li>Olives, mix, about 1-1.5 lb (pitted, no nut stuffing)</li>
 </ul>
 </section>
 
@@ -181,8 +174,7 @@ ul.check li::before { content: "\2610  "; }
 <h3>Antipasto and Caprese</h3>
 <p class="chef">Chef: Ana</p>
 <ol>
-<li>Thursday around 11:30 AM: cut the cheeses, put the olives and artichokes in serving bowls, and wash the basil. Cover and refrigerate.</li>
-<li>Thursday around 4:00: arrange the charcuterie meats, cheddar (sliced or cubed), the Italian and Spanish cheeses (sliced or cut into wedges), olives, and artichoke hearts on boards or platters, and keep them covered in the fridge.</li>
+<li>Thursday at 4:00 PM: cut the cheeses (cheddar and the Italian and Spanish cheeses, sliced or in wedges), put the olives and artichokes in serving bowls, wash the basil, and arrange the charcuterie, cheeses, olives, and artichoke hearts on boards or platters.</li>
 <li><strong>Caprese:</strong> alternate slices of fresh mozzarella and sliced tomato on a platter, tuck in the basil leaves, then drizzle with olive oil and sprinkle with salt and pepper. Assemble it close to serving (around 4:30) so the tomatoes don't get watery.</li>
 <li>Put the platters out as guests arrive (about 4:30-5:00). Keep the cheese and meats out of the fridge for no more than 2 hours.</li>
 </ol>
@@ -192,7 +184,7 @@ ul.check li::before { content: "\2610  "; }
 <div class="recipe">
 <h3>Minestrone Milan Style (triple batch, makes about 18 small bowls)</h3>
 <p class="chef">Chef: Michael</p>
-<p>From <em>The Talisman Italian Cook Book</em>, with the changes: <strong>no salt pork, no sage, no pea beans, and no peas</strong>. Pasta is cooked separately. Make it Wednesday.</p>
+<p>From <em>The Talisman Italian Cook Book</em>, with the changes: <strong>no salt pork, no sage, no pea beans, and no peas</strong>. Pasta is cooked separately. Make it Thursday afternoon.</p>
 <table>
 <tr><th>Ingredient</th><th>Amount</th></tr>
 <tr><td>Olive oil</td><td>1 tablespoon (3 tsp)</td></tr>
@@ -217,13 +209,13 @@ ul.check li::before { content: "\2610  "; }
 <li>Simmer about 45-60 minutes, until all the vegetables are tender.</li>
 <li>Remove 3-4 ladles of vegetables and broth, puree in the food processor, and stir back in. This makes it richer and less watery.</li>
 <li>Adjust the thickness with extra stock if needed. Taste and season.</li>
-<li><strong>Cool fast:</strong> divide into shallow containers and refrigerate within 2 hours.</li>
+<li>Turn off the heat, cover, and leave it on the stove until you reheat it at about 4:45 PM (about 1 1/2 hours).</li>
 </ol>
-<p><strong>Thursday:</strong> reheat on the stove, stirring, to a gentle simmer (165&deg;F). Cook the macaroni separately until al dente, drain, and toss with a little olive oil. Serve the pasta and the Romano on the side. Don't store the pasta in the soup.</p>
+<p><strong>To serve:</strong> at about 4:45 PM bring the soup back to a boil, then simmer gently (165&deg;F) until dinner, stirring occasionally. Cook the macaroni separately around 4:15 PM until al dente, drain, and toss with a little olive oil; leave it covered at room temperature. Serve the pasta and the Pecorino Romano on the side. Don't store the pasta in the soup.</p>
 </div>
 
 <div class="recipe">
-<h3>Mashed Potatoes - make Wednesday</h3>
+<h3>Mashed Potatoes - make Thursday afternoon</h3>
 <p class="chef">Chef: Carmine</p>
 <table>
 <tr><th>Ingredient</th><th>Amount</th></tr>
@@ -233,12 +225,12 @@ ul.check li::before { content: "\2610  "; }
 <tr><td>Salt</td><td>In the boiling water; add more at the end only after tasting (the salted butter adds some)</td></tr>
 </table>
 <ol>
-<li>Peel and cut the potatoes into 2-inch chunks. Cover with cold salted water.</li>
-<li>Boil 15-20 minutes until fork-tender. Drain well and return to the warm pot for 1-2 minutes to dry out.</li>
-<li>Warm the butter and milk together. Mash and add the warm mixture gradually. Keep them slightly creamier than normal, since they firm up overnight.</li>
-<li>Spread into 2 buttered dishes (or containers that fit your slow cookers), dot with butter, cover, and refrigerate.</li>
+<li>About 11:30 AM: peel and cut the potatoes into 2-inch chunks. Cover with cold salted water until you boil them.</li>
+<li>About 12:50 PM: bring to a boil and cook 15-20 minutes until fork-tender. Drain well and return to the warm pot for 1-2 minutes to dry out.</li>
+<li>Warm the butter and milk together (the microwave works). Mash and add the warm mixture gradually. Season to taste.</li>
+<li>Spread into 2 buttered oven-safe baking dishes (9x13 in), dot with butter, and cover tightly with foil.</li>
+<li><strong>Hold hot, off the stove:</strong> put the dishes in the top oven at 200&deg;F (about 1:30 PM). At 3:35 PM take them out and wrap them in towels in a cooler, where they stay above 140&deg;F for about 2 hours. Just before serving, stir in a splash of warm milk to restore the creaminess. Check that they are still above 140&deg;F.</li>
 </ol>
-<p><strong>Thursday (no oven needed):</strong> put the cold potatoes in one or two slow cookers on HIGH with a splash of warm milk and butter. Stir every 30 minutes. They take about 2-2.5 hours to reach 165&deg;F. Then switch to WARM (140&deg;F or above). Or use a big covered pot on low heat and stir often.</p>
 </div>
 
 <div class="recipe">
@@ -253,17 +245,18 @@ ul.check li::before { content: "\2610  "; }
 <tr><td>Country white bread, toasted and cubed</td><td>3 loaves (1 loaf per batch, about 27 cups of cubes)</td></tr>
 <tr><td>Fresh thyme leaves, chopped (or dried)</td><td>1 1/2 tablespoons (or 1 1/2 tsp dried)</td></tr>
 <tr><td>Salt (reduced, since the butter is salted)</td><td>1 teaspoon to start for the full tripled batch (the original recipe uses 1 tsp per batch). Taste the mixture and add more if needed.</td></tr>
-<tr><td>Ground sage</td><td>1 1/2 teaspoons</td></tr>
+<tr><td>Fresh sage, finely chopped</td><td>2 tablespoons (add more to taste)</td></tr>
 <tr><td>Pepper</td><td>3/4 teaspoon</td></tr>
 <tr><td><strong>Add-in:</strong> golden raisins</td><td>about 1 1/2 cups</td></tr>
 <tr><td><strong>Add-in:</strong> Granny Smith apples, sliced or diced</td><td>3</td></tr>
 </table>
 <ol>
-<li><strong>Wednesday:</strong> toast the country white bread, cut it into cubes, and store the cubes in bags. Chop the celery and onion.</li>
-<li><strong>Thursday morning:</strong> melt the butter in a large pot (a 6-8 qt pot, or do it in two batches). Cook the celery and onion 6-8 minutes until tender. Take it off the heat.</li>
+<li><strong>Wednesday night:</strong> toast the country white bread, cut it into cubes, and store the cubes in bags on the counter.</li>
+<li><strong>Thursday:</strong> chop the celery and onion (about 10:30 AM) and keep them covered on the counter.</li>
+<li><strong>Thursday at 2:45 PM:</strong> melt the butter in a large pot (a 6-8 qt pot, or do it in two batches). Cook the celery and onion 6-8 minutes until tender. Take it off the heat.</li>
 <li>In a very large bowl or clean roasting pan, gently toss the celery mixture with the bread cubes, thyme, salt, sage, pepper, raisins, and apples until evenly coated.</li>
-<li>Divide into <strong>3 greased 9x13 pans</strong>. Cover with foil and refrigerate until baking. (A squeeze of lemon juice on the apples keeps them from browning.)</li>
-<li>Bake <strong>two pans in the top oven</strong> (side by side on one rack) and <strong>one pan in the bottom oven beside the ham</strong>, at 325&deg;F, covered with foil, for 30 minutes. Then uncover and bake 15 minutes more. If the pans go in cold from the fridge, add about 10 minutes.</li>
+<li>Divide into <strong>3 greased 9x13 pans</strong>. Cover with foil and leave on the counter until baking at 4:15 PM (about 1 1/2 hours). A squeeze of lemon juice on the apples keeps them from browning.</li>
+<li>Bake all three pans in the <strong>bottom oven</strong> (two on one rack, one on a second rack) at 325&deg;F, covered with foil, for 30 minutes. Then uncover and bake 15 minutes more. If the pans go in cold from the fridge, add about 10 minutes.</li>
 </ol>
 <p>Anthony tosses the stuffing and slices the apples with supervision. An adult does the onion and celery chopping and the stove.</p>
 </div>
@@ -271,53 +264,42 @@ ul.check li::before { content: "\2610  "; }
 <div class="recipe">
 <h3>Ham with Brown Sugar Glaze</h3>
 <p class="chef">Chef: Leo</p>
+<p>Three fully cooked Boar's Head Sweet Slice hams (about 3.25 lb each; one is apple wood smoked). Cooking instructions from the package: bake at 325&deg;F for about 15 minutes per pound, covered tightly with foil, then uncover and bake at 425&deg;F for the final 15 minutes with extra glaze.</p>
 <ol>
-<li>Use a fully cooked 8-10 lb ham. Take it out of the fridge 1 hour before.</li>
-<li><strong>Glaze (make Wednesday):</strong> stir together 1 cup brown sugar, 1/4 cup Dijon or honey, and 2-3 tablespoons water or apple juice.</li>
-<li>Bake at 325&deg;F, covered in foil, about 10 minutes per lb (80-100 minutes for 8-10 lb) until it reaches 140&deg;F. In the last 20 minutes, uncover, brush on the glaze, and raise the oven to 400&deg;F.</li>
-<li>Rest, tented, 15 minutes before slicing. An adult handles the oven and carving.</li>
+<li>Take the hams out of the fridge about 30-45 minutes before heating.</li>
+<li><strong>Glaze (make Thursday morning):</strong> stir together 1 cup brown sugar, 1/4 cup Dijon or honey, and 2-3 tablespoons water or apple juice.</li>
+<li>Put the hams in a roasting pan (all three fit in one 16x13 pan, or use two 9x13 pans) with about 1/8 inch of water in the bottom. Cover tightly with foil and bake in the <strong>top oven</strong> at 325&deg;F for about 15 minutes per pound (about 50 minutes for 3.25 lb hams).</li>
+<li>Uncover, brush on extra glaze, raise the oven to 425&deg;F, and bake the final 15 minutes, until the center reaches 140&deg;F. In all, plan about 65 minutes.</li>
+<li>Rest, tented, 10-15 minutes before slicing. An adult handles the oven and carving.</li>
 </ol>
 </div>
 
 <div class="recipe">
 <h3>Turkey Breast + Gravy</h3>
 <p class="chef">Chef: Michael</p>
-<h4>1. Split the breasts (Wednesday morning, once fully thawed)</h4>
-<p>You are cutting each bone-in breast lengthwise into two halves (4 halves, about 3-3.5 lb each) so they lie flat in the top oven. If a breast is already split, skip this. If it gets difficult, the Wegmans butcher will split it for you when you buy it.</p>
-<ul>
-<li><strong>Tools:</strong> a large cutting board with a damp towel underneath so it doesn't slide, a heavy chef's knife or cleaver, poultry shears, a rubber mallet or rolling pin (optional), and paper towels.</li>
-</ul>
-<ol>
-<li>Wash your hands. Unwrap the breast and pat it dry. Keep the raw turkey away from other food.</li>
-<li>Set the breast skin side up. Score a line down the center of the skin, along the ridge of the breastbone.</li>
-<li>Flip it bone side up. The breastbone (keel) runs down the middle between the ribs. Set the heavy knife along the center of that bone and press down firmly. Tap the back of the blade with the mallet to cut through it. Poultry shears can also cut along it.</li>
-<li>Flip it skin side up and cut through the skin and meat along your score line to finish separating the two halves.</li>
-<li>Pat the halves dry. Keep any loose bones and trim, because they make the gravy better. Put them in the roasting pan with the turkey.</li>
-<li>Wash the board, knife, and your hands with hot soapy water when you finish.</li>
-</ol>
-<h4>2. Dry brine (Wednesday morning, 24-36 hours before roasting)</h4>
-<p>A dry brine uses salt rubbed directly on the turkey instead of soaking it in water. It seasons the meat, keeps it juicy, and dries the skin so it crisps. It needs only a sheet pan in the fridge. You must start it by 6:00 PM Wednesday at the latest (12 hours minimum), but Wednesday morning is ideal.</p>
+<h4>Dry brine (Wednesday evening, about 6:00 PM; 12-24 hours before roasting)</h4>
+<p>Based on the Serious Eats dry-brine method for two 6 lb bone-in breasts (12 lb total). Salt is rubbed directly on the turkey instead of soaking it in water. It seasons the meat and dries the skin, and the baking powder helps the skin brown and crisp. It needs only a half-sheet pan on one fridge shelf. You brine and roast the two fresh breasts whole (no splitting).</p>
 <table>
-<tr><th>Ingredient</th><th>Amount for 4 halves</th></tr>
-<tr><td>Diamond Crystal kosher salt</td><td>10 teaspoons (about 3 1/3 tablespoons), or 2 1/2 tsp per half. If using Morton kosher, use 7 teaspoons (1 3/4 tsp per half).</td></tr>
-<tr><td>Orange zest</td><td>2 oranges</td></tr>
-<tr><td>Black peppercorns, coarsely crushed</td><td>2 teaspoons</td></tr>
-<tr><td>Fresh thyme and sage, finely chopped</td><td>1 tablespoon each</td></tr>
-<tr><td>Fresh rosemary, finely chopped</td><td>2 teaspoons</td></tr>
-<tr><td>Sugar (optional)</td><td>1 teaspoon</td></tr>
+<tr><th>Ingredient</th><th>Amount for 2 breasts</th></tr>
+<tr><td>Diamond Crystal kosher salt</td><td>3 to 4 tablespoons (use 3 for lighter seasoning, 4 for fuller). If using Morton kosher, use 2 1/4 to 3 tablespoons. Do not use the Diamond Crystal amount with Morton.</td></tr>
+<tr><td>Baking powder, <strong>aluminum-free</strong> (not baking soda)</td><td>1 tablespoon (3 tsp)</td></tr>
+<tr><td>Black pepper</td><td>2 teaspoons</td></tr>
+<tr><td>Orange zest (optional, for flavor)</td><td>2 oranges</td></tr>
+<tr><td>Finely chopped fresh thyme, sage, and rosemary (optional)</td><td>1 tablespoon each of thyme and sage, 2 teaspoons rosemary</td></tr>
 </table>
 <ol>
-<li>Mix everything in a small bowl. Rub the orange zest into the salt with your fingers.</li>
-<li>Gently lift the skin on each half and rub about a third of the mixture on the meat underneath. Rub the rest on top of the skin and on the bone side.</li>
-<li>Set the halves skin side up on a wire rack in a rimmed sheet pan (a half-sheet pan, 18x13 in, fits all four). Leave it <strong>uncovered</strong> in the fridge for 24-36 hours. The salt draws out moisture, then the meat reabsorbs it, and the skin dries out. You can go up to 48 hours.</li>
-<li>Thursday: <strong>do not rinse</strong> and do not add more salt. Blot any wet spots with paper towels, then butter and roast as below.</li>
+<li>Pat both breasts completely dry with paper towels. Mix the salt, baking powder, and pepper in one bowl, and divide it in half so each breast gets an equal share. Mix the orange zest and herbs in a second small bowl.</li>
+<li>Gently slide your fingers under the skin of each breast to loosen it without tearing. Rub about half of that breast's salt mixture, plus half of the zest and herbs, directly on the meat. Sprinkle the rest of the salt mixture evenly over the skin. Keep the herbs and zest under the skin, since they scorch on top at high heat.</li>
+<li>Set both breasts skin side up on a wire rack in a rimmed half-sheet pan (18x13 in), with 1-2 inches of space between them. Leave it <strong>uncovered</strong> in the fridge for 12 to 24 hours (about 19-20 hours if you start at 6:00 PM Wednesday for a 2:30 PM roast).</li>
+<li>Thursday: <strong>do not rinse</strong> and do not add more salt.</li>
 </ol>
-<h4>Roast</h4>
+<h4>Roast (Thursday, bottom oven)</h4>
 <ol>
-<li>Wednesday: mix 2 sticks of softened unsalted butter with chopped herbs (thyme, sage, parsley) and refrigerate. Thursday: let it soften, then rub the turkey halves with it (about 1/2 stick per half), including under the skin. <strong>No added salt</strong>, since the brine already salted the meat. Leave out of the fridge 30-45 minutes before roasting.</li>
-<li>Roast <strong>skin side up in the top oven</strong> at 325&deg;F, on a rack in a half-sheet pan (18x13 in) or a roasting pan up to about 16x13 in, with a little stock in the bottom. Use the lower rack position, with at least 2 in of space above the meat. Start checking at 1 hour. Each half is done at <strong>165&deg;F</strong> in the thickest part, usually 1-1 1/2 hours. Tent loosely with foil if the skin browns too fast.</li>
-<li>Move the turkey halves to a clean pan or cutting board and pour the drippings into a pot for the gravy. Rest tented with foil for 30-45 minutes before carving. The halves hold above 140&deg;F for about an hour. For a longer hold, wrap in foil and towels or set in a cooler. Check the temperature before carving and warm the slices with hot gravy if needed.</li>
-<li><strong>Gravy (about 6 cups):</strong> pour the drippings into a pot and add butter to make about 1/2 cup of fat. Whisk in 1/2 cup flour and cook 2 minutes. Slowly whisk in 6 cups warm stock. Simmer 10 minutes. Use low-sodium or unsalted stock, and taste before adding any salt, since brined drippings and salted butter are salty. Two breasts don't give many drippings, so have extra stock ready.</li>
+<li>About 45 minutes before roasting, take the turkey out of the fridge. Blot any wet spots with paper towels. Preheat the bottom oven to <strong>425&deg;F</strong> (400&deg;F if the oven is convection).</li>
+<li>Pour about 1 cup of stock or water into the pan under the rack, so the drippings don't scorch. Brush or rub each breast with 1 to 1 1/2 tablespoons of melted unsalted butter (or vegetable oil). Keep the breasts on the rack, spaced apart so heat circulates.</li>
+<li>Roast for about 75-100 minutes (the original recipe says 65-85 for one breast, but two breasts in one oven take a bit longer), rotating the pan halfway through for even browning. Start checking at 60 minutes. <strong>Pull each breast when the thickest part (away from the bone) reaches 158&deg;F.</strong> One may finish 5-10 minutes before the other, so pull the first one first.</li>
+<li>Move the breasts to a clean pan or cutting board and rest, tented loosely with foil, for 20-30 minutes. The temperature will rise during the rest. <strong>Check that it reaches 165&deg;F</strong> in the thickest part before carving; if it does not, return it to the oven for a few minutes. A whole breast holds above 140&deg;F for about an hour. For a longer hold, wrap in foil and towels or set it in a cooler.</li>
+<li><strong>Gravy (about 6 cups):</strong> pour the pan drippings (and the stock or water under the rack) into a fat separator or measuring cup. Skim off the fat, and measure 6-8 tbsp (top up with unsalted butter if needed). Melt it in a saucepan, whisk in 6-8 tbsp all-purpose flour, and cook 2 minutes. Slowly whisk in the drippings and about 5 cups of warm stock. Simmer 8-10 minutes until it coats a spoon. Use low-sodium or unsalted stock, and taste before adding any salt, since the drippings are salty. Pepper to taste.</li>
 </ol>
 </div>
 
@@ -326,8 +308,8 @@ ul.check li::before { content: "\2610  "; }
 <p class="chef">Chef: Dominic</p>
 <p>Ingredients: 4 lb green beans, olive oil, butter, salt. Optional: lemon.</p>
 <ol>
-<li>Wednesday: trim the beans, then boil in well-salted water for 4-5 minutes (in two batches if needed) until crisp-tender. Cool in an ice bath, drain, dry well, and refrigerate.</li>
-<li>Thursday around 4:50: heat a large skillet with olive oil and a few tablespoons of butter, add the beans, and toss until hot (3-5 minutes).</li>
+<li>Trim the beans (any time Thursday). At about 4:50 PM boil them in well-salted water for 4-5 minutes in one large pot until crisp-tender (two batches if the pot is small). Drain.</li>
+<li>Return them to the hot pot and toss with olive oil and a few tablespoons of butter.</li>
 <li>Taste before adding salt, since the butter is salted. A squeeze of lemon is optional.</li>
 </ol>
 <p>Plain green beans only, with no peas or mixed vegetable blends.</p>
@@ -344,20 +326,20 @@ ul.check li::before { content: "\2610  "; }
 </table>
 <p><strong>Dressing</strong> (about 1 1/4 cups, enough for 2 lb of greens): 3/4 cup olive oil, 1/2 cup lemon juice (about 3 lemons), 1 1/2 teaspoons salt, 1-2 teaspoons sugar, and pepper. Shake in a jar, taste, and adjust the sugar and lemon.</p>
 <ol>
-<li>Wednesday: make the dressing and refrigerate it.</li>
-<li>Wednesday: wash and dry the greens (if not pre-washed) and peel the carrots. Keep them in containers lined with paper towels.</li>
-<li>Thursday afternoon: slice the cucumbers and put everything in the salad bowl in the fridge.</li>
+<li>Thursday morning: make the dressing and leave it on the counter.</li>
+<li>Thursday at 4:00 PM: wash and dry the greens (if not pre-washed), peel the carrots into ribbons, and slice the cucumbers.</li>
+<li>Put everything in the salad bowl and keep it cool until serving.</li>
 <li>Toss with the dressing right before serving (around 5:15) so the greens stay crisp.</li>
 </ol>
 </div>
 
 <div class="recipe">
-<h3>Cranberry Sauce, Cornbread (store-bought), Chestnuts</h3>
+<h3>Cranberry Sauce, Cornbread, Chestnuts</h3>
 <p class="chef">Chef: Dominic (cranberry sauce and chestnuts); Michael (cornbread)</p>
 <ul>
 <li><strong>Cranberry:</strong> chill 3 cans, then open, slice or spoon into a bowl.</li>
-<li><strong>Cornbread:</strong> store-bought. Put it covered in foil in the bottom oven at 325&deg;F for about 10-15 minutes to warm, once the ham comes out.</li>
-<li><strong>Roasted chestnuts:</strong> cut an X in each flat side (Wednesday is fine) and bake on a sheet at 400&deg;F for 20-25 minutes until the shells curl. Wrap in a towel for 5 minutes, then peel while warm. Do this after dinner when the oven is free.</li>
+<li><strong>Cornbread:</strong> bake the 2 box mixes Thursday at 9:30 AM as muffins in two muffin tins (bottom oven), following the box directions (each box: 2 eggs, 1/3 cup butter, 1/2 cup milk, so 4 eggs, 2/3 cup butter, and 1 cup milk in all). Each box makes 12 muffins (24 in all, about 1 1/3 per person), baked about 18 minutes at the temperature on the box. Cool, then cover tightly with foil. At 4:55 PM warm them in the foil in the bottom oven beside the stuffing at 325&deg;F for about 5-10 minutes.</li>
+<li><strong>Roasted chestnuts:</strong> cut an X in each flat side and bake on a sheet at 400&deg;F for 20-25 minutes until the shells curl. Wrap in a towel for 5 minutes, then peel while warm. Do this after dinner when the oven is free.</li>
 </ul>
 </div>
 </section>
@@ -369,10 +351,10 @@ ul.check li::before { content: "\2610  "; }
 
 <h3>Baking and roasting pans</h3>
 <ul class="check">
-<li>Half-sheet pan (18x13 in) or roasting pan (up to about 16x13 in) with a rack, for the 4 turkey halves (goes in the top oven; the meat and pan should leave about 2 in of space below the top)</li>
-<li>Roasting pan for the ham (8-10 lb; goes in the bottom oven). Leave room beside it for a 9x13 stuffing pan: turn both pans so their long sides run front to back.</li>
-<li><strong>3 baking pans, 9x13 in</strong>, for the stuffing (two side by side in the top oven, one in the bottom oven). Buy 4 if you might make a fourth batch.</li>
-<li>Baking sheet or pan to warm the store-bought cornbread (a rimmed sheet works)</li>
+<li>Large roasting pan with a rack (about 18x14 in), or two 9x13 pans with racks, for the 2 whole turkey breasts (goes in the bottom oven; breasts are about 7-8 in tall with the rack)</li>
+<li>Roasting pan (about 16x13 in) for the 3 hams, or two 9x13 pans (goes in the top oven; the pan, hams, and foil should stay under about 7 in tall, with at least 2 in of space above)</li>
+<li><strong>3 baking pans, 9x13 in</strong>, for the stuffing (all in the bottom oven: two side by side on one rack, one on a second rack). Buy 4 if you might make a fourth batch.</li>
+<li>2 muffin tins (12 cups each) for the cornbread muffins</li>
 <li>2 rimmed baking sheets (roasting chestnuts)</li>
 <li>Wire rack (for the dry-brined turkey; it can also be the roasting rack)</li>
 </ul>
@@ -387,14 +369,11 @@ ul.check li::before { content: "\2610  "; }
 <li>Medium saucepan for the gravy</li>
 <li>Small saucepan for warming milk and butter for the potatoes</li>
 <li>Skillet (optional, for reheating beans or toasting)</li>
-<li><strong>1-2 slow cookers, 6 qt or larger</strong>, for warming the potatoes (8-9 lb needs 2)</li>
 </ul>
 
 <h3>Turkey prep</h3>
 <ul class="check">
 <li>Rimmed half-sheet pan (18x13 in) with a wire rack, for the dry-brined turkey in the fridge</li>
-<li>Large cutting board with a damp towel to hold it steady</li>
-<li>Heavy chef's knife or cleaver, and poultry shears (a rubber mallet or rolling pin is optional)</li>
 <li>Clean towels (and a cooler, optional) to hold the cooked turkey warm if you carve later</li>
 </ul>
 
@@ -417,8 +396,7 @@ ul.check li::before { content: "\2610  "; }
 
 <h3>Storage</h3>
 <ul class="check">
-<li>4-5 shallow containers for cooling the soup quickly on Wednesday</li>
-<li>2 containers or dishes for the cold mashed potatoes (they should fit your slow cookers)</li>
+<li>2 oven-safe baking dishes (9x13 in) with lids or foil, for the mashed potatoes (they go in the top oven Thursday)</li>
 <li>Containers for leftovers</li>
 <li>Foil (heavy-duty), plastic wrap, zip bags for the bread cubes</li>
 </ul>
@@ -438,63 +416,63 @@ ul.check li::before { content: "\2610  "; }
 <!-- ===================== PLAN ===================== -->
 <section id="plan">
 <h2>5. Plan</h2>
-<p>Uses your <strong>double oven</strong>: the <strong>top oven</strong> (10 in tall) roasts the split turkey breasts early, then takes two of the three stuffing pans at 4:30 (two 9x13 pans fit side by side on one rack). The <strong>bottom oven</strong> (15 in tall) takes the ham and the third stuffing pan. The potatoes and soup stay off the ovens.</p>
+<p>Uses your <strong>double oven</strong> and 4 burners. Only the stuffing bread is done Wednesday night; everything else is cooked Thursday. The <strong>bottom oven</strong> (15 in tall) bakes the cornbread muffins in the morning, roasts the two whole turkey breasts from 2:30 PM at 425&deg;F, then takes all three stuffing pans once the turkey is out (two on one rack, one on a second rack). The <strong>top oven</strong> (10 in tall) holds the mashed potatoes at 200&deg;F from 1:30 PM, then heats the three small hams from 3:50 PM. Burners: no more than 3 at once, because the pasta is cooked early and the gravy is reheated in the microwave.</p>
 
 <h3>Monday and Tuesday</h3>
 <ul class="check">
 <li>Finish all shopping and read every ingredient list (nut ingredients, peas, lentils, pea protein; "may contain nuts" is OK).</li>
-<li>Check that the turkey is thawing in the fridge. It must be <strong>fully thawed by Wednesday morning</strong>, since you will split it and salt it then. Breasts need 2-3 days, a whole bird 4-5. If it's still frozen, use the cold-water method. The latest you can start the dry brine is Wednesday at 6:00 PM.</li>
+<li>The turkey breasts are fresh, so there is nothing to thaw. Check the sell-by date. The dry brine starts Wednesday at about 6:00 PM.</li>
 <li>Confirm with Ana and Halmoni what they bring.</li>
-<li>Check that you have 1-2 slow cookers and enough roasting pans, foil, and a meat thermometer.</li>
-<li>Clear fridge space for Wednesday night: the soup (about 5 qt), 2 dishes of mashed potatoes, the green beans, the salad parts, and the turkey on its half-sheet pan. The dry brine needs only one fridge shelf (no cooler).</li>
+<li>Check that you have enough roasting pans, baking dishes, foil, a meat thermometer, and a cooler with towels (to hold the potatoes warm).</li>
+<li>Clear one fridge shelf for Wednesday evening: the dry-brining turkey on its half-sheet pan. Everything else is cooked Thursday, so it does not need fridge space ahead of time.</li>
 </ul>
 
 <h3>Wednesday</h3>
 <ul class="check">
-<li><span class="time">8:30 AM</span> <strong>Split the turkey breasts and dry brine them</strong> (see the turkey recipe). Put them uncovered on a rack in a sheet pan in the fridge.</li>
-<li><span class="time">9:00 AM</span> Chop all the minestrone vegetables.</li>
-<li><span class="time">10:00 AM</span> Start the minestrone.</li>
-<li><span class="time">11:30 AM</span> Puree a few ladles and stir back in. Cool in shallow containers and refrigerate.</li>
-<li><span class="time">12:00 PM</span> Toast and cube the stuffing bread and keep it in bags. Chop the celery and onion.</li>
-<li><span class="time">12:30 PM</span> Make the salad dressing and refrigerate.</li>
-<li><span class="time">1:00 PM</span> Peel and cut the potatoes.</li>
-<li><span class="time">1:30 PM</span> Boil the potatoes.</li>
-<li><span class="time">2:00 PM</span> Mash. Divide into containers, cover, and refrigerate.</li>
-<li><span class="time">3:15 PM</span> <strong>Blanch the green beans</strong> (4-5 minutes), cool in an ice bath, drain well, and dry. Refrigerate in a container lined with paper towels. Put the 3 cans of cranberry sauce in the fridge to chill.</li>
-<li><span class="time">4:15 PM</span> <strong>Salad prep:</strong> wash and dry the greens (if not pre-washed) and peel the carrots into ribbons. Refrigerate in containers lined with paper towels. Leave the cucumbers whole.</li>
-<li><span class="time">4:30 PM</span> Make the ham glaze. Mix the softened unsalted butter with the chopped herbs for the turkey rub. Cut an X in each chestnut. Refrigerate all of it.</li>
+<li><span class="time">Evening</span> <strong>Toast and cube the stuffing bread</strong> (3 loaves of country white, about 27 cups). Dry it in a 300&deg;F oven until golden, in batches, and store the cubes in bags on the counter.</li>
+<li><span class="time">6:00 PM</span> <strong>Dry brine the turkey breasts</strong> (see the turkey recipe) and put them uncovered on a rack in a sheet pan on one fridge shelf.</li>
 <li><span class="time">Evening</span> Set the table, plan the kids' table, and set out serving dishes with labels.</li>
+<li><span class="time">Evening</span> Buy any last items (salad greens, basil, anything left on the list).</li>
 </ul>
 
 <h3>Thursday</h3>
 <table>
 <tr><th>Time</th><th>Task</th></tr>
-<tr><td class="time">10:30 AM</td><td><strong>Make the stuffing.</strong> Sauté the celery and onion in the butter, toss with the bread, raisins, thyme, sage, salt, pepper, and apples, and divide into three 9x13 pans. Cover and refrigerate.</td></tr>
-<tr><td class="time">11:30 AM</td><td><strong>Antipasto prep:</strong> cut the cheddar and the Italian and Spanish cheeses, put the olives and artichokes in serving bowls, and wash and dry the basil. Cover and refrigerate.</td></tr>
-<tr><td class="time">1:30 PM</td><td>Turkey halves and the herb butter out of the fridge to take the chill off. Blot any wet spots (do not rinse), then rub the turkey with the herb butter (no added salt).</td></tr>
-<tr><td class="time">2:15 PM</td><td>Top oven to 325&deg;F. <strong>Turkey halves in the top oven</strong>, skin side up, on the lower rack (about 1-1 1/2 hr). If the oven is convection, use convection roast at 300&deg;F and check it 15 minutes earlier.</td></tr>
-<tr><td class="time">2:30 PM</td><td><strong>Potatoes into the slow cooker(s) on HIGH</strong> with milk and butter. Stir every 30 minutes.</td></tr>
-<tr><td class="time">2:30 PM</td><td>Take the ham out of the fridge (about 1 hour before it goes in the oven).</td></tr>
-<tr><td class="time">3:15 PM</td><td>Start checking the turkey (165&deg;F in the thickest part). Pull each half when it reaches temperature (about 3:30-3:45). Move to a clean pan, pour the drippings into a pot, and tent with foil to rest.</td></tr>
-<tr><td class="time">3:30 PM</td><td><strong>Ham in the bottom oven</strong> at 325&deg;F, covered. An 8-10 lb ham needs about 80-100 minutes. Check it at 4:45. If it is not yet 140&deg;F at 5:00, tent it and leave it in a few more minutes.</td></tr>
-<tr><td class="time">3:45 PM</td><td>Make the gravy from the drippings and keep it warm. Guests start arriving.</td></tr>
-<tr><td class="time">4:00 PM</td><td>Slice the cucumbers and put the salad ingredients in the large bowl (keep the dressing separate). Keep in the fridge.</td></tr>
-<tr><td class="time">4:00 PM</td><td>Arrange the antipasto platters (meats, cheddar, Italian and Spanish cheeses, olives, artichokes) and keep them covered in the fridge.</td></tr>
-<tr><td class="time">4:15 PM</td><td>Start reheating the soup on low. Open the chilled cranberry sauce and slice it into a bowl. <strong>Third stuffing pan into the bottom oven</strong> beside the ham (325&deg;F, covered).</td></tr>
-<tr><td class="time">4:30 PM</td><td>Assemble the caprese and put out the antipasto. <strong>Two stuffing pans in the top oven</strong> at 325&deg;F, covered (45 min total, longer if cold from the fridge). Check the potatoes (165&deg;F), then switch to WARM. Put the water on for the pasta.</td></tr>
-<tr><td class="time">4:40 PM</td><td>Brush the glaze on the ham, uncover, oven to 400&deg;F. Uncover the third stuffing pan (it browns fast at 400&deg;F, so watch it).</td></tr>
-<tr><td class="time">4:50 PM</td><td>Check the turkey temperature (it should be above 140&deg;F), then carve it and moisten with hot gravy. Reheat the green beans in a skillet with olive oil and butter. Cook the macaroni and toss with oil.</td></tr>
-<tr><td class="time">5:00 PM</td><td>Ham out (140&deg;F), tent it. Third stuffing pan out. Uncover the two top-oven pans. Put the store-bought cornbread (covered in foil) in the bottom oven and set it back to 325&deg;F to warm for 10-15 minutes.</td></tr>
-<tr><td class="time">5:15 PM</td><td>Stuffing out. Toss the salad. Slice the ham. Soup to a simmer (165&deg;F). Put out the pasta and Romano.</td></tr>
+<tr><td class="time">9:00 AM</td><td>Make the salad dressing and ham glaze. Cut an X in each chestnut.</td></tr>
+<tr><td class="time">9:30 AM</td><td><strong>Bake the cornbread muffins</strong> (2 box mixes, 12 muffins each, in two muffin tins; about 18 minutes at the box temperature, bottom oven). Cool, then cover tightly with foil.</td></tr>
+<tr><td class="time">10:30 AM</td><td>Chop the stuffing celery and onion (keep covered on the counter).</td></tr>
+<tr><td class="time">11:30 AM</td><td>Peel and cut the mashing potatoes into cold salted water. Chop the soup vegetables and dice the 6 soup potatoes (the kids can help).</td></tr>
+<tr><td class="time">12:50 PM</td><td><strong>Start the mashing potatoes boiling</strong> (15-20 minutes).</td></tr>
+<tr><td class="time">1:15 PM</td><td>Drain and mash the potatoes with warm milk and butter. Spread into 2 buttered 9x13 dishes, dot with butter, and cover tightly with foil.</td></tr>
+<tr><td class="time">1:30 PM</td><td><strong>Top oven to 200&deg;F and potatoes in</strong>, covered, to hold hot.</td></tr>
+<tr><td class="time">1:45 PM</td><td>Turkey out of the fridge. Blot any wet spots (do not rinse).</td></tr>
+<tr><td class="time">1:45 PM</td><td><strong>Start the soup</strong> (sauté, add vegetables and stock, simmer 45-60 minutes).</td></tr>
+<tr><td class="time">2:15 PM</td><td>Bottom oven to 425&deg;F (400&deg;F if convection).</td></tr>
+<tr><td class="time">2:30 PM</td><td><strong>Turkey breasts in the bottom oven</strong> on the rack, skin side up, with about 1 cup stock or water in the pan. Brush each with melted unsalted butter. Rotate the pan halfway through.</td></tr>
+<tr><td class="time">2:45 PM</td><td><strong>Make the stuffing.</strong> Sauté the celery and onion in the butter, toss with the bread, raisins, apples, and seasonings, and divide into three 9x13 pans. Cover with foil and leave on the counter.</td></tr>
+<tr><td class="time">3:00 PM</td><td>Puree a few ladles of the soup and stir back in. Turn off the heat, cover, and leave it on the stove.</td></tr>
+<tr><td class="time">3:05 PM</td><td>Take the hams out of the fridge (about 45 minutes before they go in the oven).</td></tr>
+<tr><td class="time">3:30 PM</td><td>Start checking the turkey from about 3:30. Pull each breast when the thickest part reaches <strong>158&deg;F</strong> (about 3:50-4:15). Move to a clean pan, pour the drippings into a pot, and tent loosely with foil to rest. After 15 minutes check that it has reached 165&deg;F.</td></tr>
+<tr><td class="time">3:35 PM</td><td>Potatoes out of the top oven. Keep them covered in foil and wrap the dishes in towels in a cooler to stay hot. Top oven to 325&deg;F.</td></tr>
+<tr><td class="time">3:45 PM</td><td>Make the gravy from the drippings (see the notes in the turkey recipe). Pour it into a gravy boat or pitcher. Guests start arriving.</td></tr>
+<tr><td class="time">3:50 PM</td><td><strong>Hams in the top oven</strong> at 325&deg;F, in a roasting pan with about 1/8 inch of water, covered tightly with foil (about 50 minutes covered).</td></tr>
+<tr><td class="time">4:00 PM</td><td>Wash and cut the salad ingredients. Cut the cheeses and arrange the antipasto platters. Put the water on for the pasta.</td></tr>
+<tr><td class="time">4:15 PM</td><td>Once the turkey is out of the bottom oven, set it to 325&deg;F (open the door for a few minutes to cool it faster). Put in <strong>all three stuffing pans</strong> (two on one rack, one on a second rack), covered. They need about 45-55 minutes in all (longer if cold). Cook the macaroni, drain, toss with oil, and leave it covered at room temperature.</td></tr>
+<tr><td class="time">4:30 PM</td><td>Assemble the caprese and put out the antipasto. Check that the potatoes are still above 140&deg;F.</td></tr>
+<tr><td class="time">4:40 PM</td><td>Uncover the hams, brush on extra glaze, raise the top oven to 425&deg;F, and bake 15 more minutes (until 140&deg;F).</td></tr>
+<tr><td class="time">4:45 PM</td><td>Bring the soup back to a boil, then simmer gently to 165&deg;F.</td></tr>
+<tr><td class="time">4:50 PM</td><td>Check the turkey temperature (it should be above 140&deg;F), then carve it and moisten with hot gravy. Boil the green beans (4-5 minutes), drain, and toss with olive oil and butter. Uncover the stuffing pans.</td></tr>
+<tr><td class="time">4:55 PM</td><td>Hams out (140&deg;F), tent them to rest for 10-15 minutes. Put the cornbread muffins (covered in foil) in the bottom oven beside the stuffing (325&deg;F) to warm for 5-10 minutes. Take the stuffing out when golden (about 5:05).</td></tr>
+<tr><td class="time">5:15 PM</td><td>Reheat the gravy in the microwave. Toss the salad. Stir warm milk into the potatoes. Slice the ham. Put out the pasta and the Pecorino Romano.</td></tr>
 <tr><td class="time">5:30 PM</td><td><strong>Dinner.</strong> Serve the soup first, then the main course.</td></tr>
 <tr><td class="time">After dinner</td><td>Roast the chestnuts (400&deg;F, 20-25 min) and serve dessert. Refrigerate leftovers within 2 hours.</td></tr>
 </table>
-<div class="note"><strong>Why this works:</strong> the two ovens run at different temperatures at the same time. The split turkey breasts lie flat enough for the top oven and cook faster, so the top oven is free again by 4:30 for the stuffing, and the bottom oven is all yours for the ham. The turkey must be out of the top oven by 4:30. If you are running late, move the stuffing pans to the bottom oven with the ham.</div>
+<div class="note"><strong>Why this works:</strong> nothing cooked needs fridge space. The mashed potatoes hold hot in the top oven and then a towel-wrapped cooler, the soup stays covered on the stove (about 1 1/2 hours, within the 2-hour limit), and the stuffing waits 1 1/2 hours on the counter before baking. The pasta is cooked early and the gravy is reheated in the microwave, so you never need more than about 3 burners. The turkey must be out of the bottom oven by about 4:15 PM so the stuffing can go in. If it is running late, tent it and let it finish; the stuffing can wait a few minutes. The dry brine is short (about 5 hours), so salt the turkey Wednesday evening instead if you can spare a shelf.</div>
 
 <h3>Kids' jobs (with an adult nearby)</h3>
 <table>
 <tr><th>Who</th><th>Job</th></tr>
-<tr><td>Carmine</td><td>Mashed potatoes (Wednesday) and stirring/serving them Thursday</td></tr>
+<tr><td>Carmine</td><td>Mashed potatoes (Thursday afternoon)</td></tr>
 <tr><td>Leo</td><td>Ham glaze. An adult handles the oven.</td></tr>
 <tr><td>Dominic</td><td>Green beans, cranberry sauce, and roasting chestnuts</td></tr>
 <tr><td>Anthony</td><td>Mix the stuffing and slice apples</td></tr>
@@ -506,7 +484,7 @@ ul.check li::before { content: "\2610  "; }
 <ul>
 <li>Refrigerate cooked food within 2 hours. Cool large batches in shallow containers.</li>
 <li>Keep the fridge at 40&deg;F or below.</li>
-<li>Raw turkey: keep it away from other food, wash hands, and wash the board, knife, and sink with hot soapy water after splitting it.</li>
+<li>Raw turkey: keep it away from other food, wash hands, and wash the board, knife, and sink with hot soapy water after handling it.</li>
 <li>Reheat soup and potatoes to 165&deg;F. Turkey to 165&deg;F. Ham to 140&deg;F.</li>
 <li>Keep hot food at 140&deg;F or above until served.</li>
 </ul>
