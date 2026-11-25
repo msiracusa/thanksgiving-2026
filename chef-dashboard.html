@@ -377,12 +377,12 @@ const OVEN_TOP = [
   { s: T(15,50), e: T(16,40), temp: "325F", state: "Baking", what: "3 hams in 1/8 inch of water, covered with foil" },
   { s: T(16,40), e: T(16,55), temp: "425F", state: "Glazing", what: "3 hams, uncovered, with extra glaze. Pull at 140F" }
 ];
-// slot: BL/BM/BR = the 3 small back burners, FL/FR = the 2 large front burners
+// slot: FL/FR = the 2 large front burners (use these first); BL/BM/BR = the 3 small back burners (only if both front burners are busy)
 const BURNERS = [
   { s: T(12,50), e: T(13,15), slot: "FR", pot: "10 qt pot", short: "Potatoes", what: "Boiling the mashing potatoes" },
   { s: T(13,45), e: T(15,10), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: sauté, then simmer" },
-  { s: T(14,45), e: T(15,0), slot: "BM", pot: "Large saucepan", short: "Stuffing", what: "Stuffing: celery and onion in butter" },
-  { s: T(15,45), e: T(16,5), slot: "BL", pot: "8 qt pot A", short: "Gravy", what: "Gravy" },
+  { s: T(14,45), e: T(15,0), slot: "FR", pot: "Large saucepan", short: "Stuffing", what: "Stuffing: celery and onion in butter" },
+  { s: T(15,45), e: T(16,5), slot: "FL", pot: "8 qt pot A", short: "Gravy", what: "Gravy" },
   { s: T(16,0), e: T(16,30), slot: "FR", pot: "8 qt pot B", short: "Pasta", what: "Pasta water, then macaroni" },
   { s: T(16,45), e: T(17,25), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: back to a boil, then simmer" },
   { s: T(16,50), e: T(17,0), slot: "FR", pot: "8 qt pot B", short: "Green beans", what: "Green beans (4-5 min boil)" }
