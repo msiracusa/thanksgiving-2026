@@ -57,7 +57,7 @@ main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) mi
 .bar > div { height: 100%; background: var(--accent); width: 0; }
 .timerrow { display: flex; align-items: center; justify-content: space-between; gap: 1.2vw; }
 .timerleft { min-width: 0; }
-#doneBtn { font-size: clamp(14px, 1.5vw, 28px); padding: 0.7em 1.1em; flex: 0 1 30%; line-height: 1.15; }
+#doneBtn { font-size: clamp(11px, min(1.05vw, 1.9vh), 19px); padding: 0.5em 0.9em; flex: 0 1 22%; line-height: 1.15; align-self: center; max-height: 100%; }
 #alsoCard { flex: 1 1 0; }
 .row { display: flex; justify-content: space-between; gap: 0.8vw; font-size: clamp(12px, 1.1vw, 20px); padding: 0.35vh 0; border-bottom: 1px solid var(--line); }
 .row:last-child { border-bottom: 0; }
@@ -148,7 +148,7 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
   #nowDetail { font-size: 17px !important; flex: none; overflow: visible; }
   #timer { font-size: 54px !important; }
   #timerLabel { font-size: 12px; }
-  #doneBtn { font-size: 16px; padding: 0.8em 1em; flex: 0 1 38%; }
+  #doneBtn { font-size: 14px; padding: 0.6em 0.9em; flex: 0 1 34%; }
   .bar { height: 10px; }
   .row { font-size: 15px; }
   .oven .name { font-size: 15px; } .oven .temp { font-size: 30px; } .oven .what { font-size: 16px; } .oven .state { font-size: 13px; }
@@ -265,9 +265,9 @@ const RANGE_START = W(17, 0), RANGE_END = T(20, 0);
 // s = start, d = duration in minutes, bg = background (running on its own, not hands-on)
 const TASKS = [
   { id: "w1", s: W(17,30), d: 15, t: "Check your supplies", who: "Michael",
-    x: "Have in hand: aluminum-free baking powder, Morton salt, vegetable oil, basil, and a half-sheet pan (or roasting pan) with a wire rack that fits on a fridge shelf." },
+    x: "Have in hand: aluminum-free baking powder, Morton salt, vegetable oil, basil, and the roasting pan with the stainless steel wire rack. Make room on one fridge shelf for the roasting pan (it fits once the shelf is cleared)." },
   { id: "w2", s: W(18,0), d: 20, t: "Dry brine the turkey", who: "Michael",
-    x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the rack in the pan, UNCOVERED, on one fridge shelf. You will not rinse it later." },
+    x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the wire rack in the roasting pan, UNCOVERED, on one fridge shelf. The same pan and rack are used to roast it. You will not rinse it later." },
   { id: "w3", s: W(19,0), d: 55, t: "Toast the stuffing bread", who: "Michael",
     x: "Toast the country white bread in the toaster (6 slices per round, about 6 minutes with unloading). Cube each batch while the next one toasts. 3 loaves (about 45 slices, 27 cups of cubes) is what the stuffing needs; the 4th loaf is a spare. Bag the cubes and leave them on the counter." },
   { id: "w4", s: W(20,0), d: 30, t: "Set the table and label dishes", who: "Michael + kids",
@@ -276,7 +276,7 @@ const TASKS = [
   { id: "t1", s: T(9,0), d: 20, t: "Dressing, glaze, and chestnuts", who: "Michael",
     x: "Salad dressing: 3/4 cup olive oil, 1/2 cup lemon juice (about 3 lemons), 1 1/2 tsp salt, 1-2 tsp sugar, pepper, shaken in a jar. Ham glaze: 1 cup brown sugar, 1/4 cup Dijon or honey, 2-3 tbsp water or apple juice. Cut an X in each chestnut. Leave all on the counter. At 9:15 set the BOTTOM oven to 375F for the cornbread." },
   { id: "t2", s: T(9,30), d: 20, t: "Bake the cornbread muffins", who: "Michael",
-    x: "2 box mixes (per box: 2 eggs, 1/3 cup butter, 1/2 cup milk). Fill 2 muffin tins (12 each). Bake in the BOTTOM oven at 375F for 18 minutes. Cool, then cover tightly with foil." },
+    x: "2 box mixes (per box: 2 eggs, 1/3 cup butter, 1/2 cup milk). Grease 2 muffin tins (12 cups each) with the vegetable shortening, then fill them. Bake in the BOTTOM oven at 375F for 18 minutes. Cool, then cover tightly with foil." },
   { id: "t3", s: T(10,30), d: 30, t: "Chop the stuffing celery and onion", who: "Anthony + an adult",
     x: "6 large celery stalks and 3 medium onions. Keep covered on the counter." },
   { id: "t4", s: T(11,30), d: 70, t: "Peel and chop potatoes and soup vegetables", who: "Carmine, Dominic, Michael",
@@ -298,7 +298,7 @@ const TASKS = [
   { id: "t10", s: T(14,15), d: 15, t: "Preheat the BOTTOM oven to 425F", who: "Michael",
     x: "Use 400F if the oven is convection. Rack in the lower-middle position." },
   { id: "t11", s: T(14,30), d: 15, t: "Turkey into the bottom oven", who: "Michael",
-    x: "Pour about 1 cup stock or water under the rack, add herb sprigs and orange zest strips. Brush the breasts lightly with vegetable oil. Roast skin side up at 425F." },
+    x: "Pour off any liquid that collected overnight, then add about 1 cup stock or water under the rack, add herb sprigs and orange zest strips. Brush the breasts lightly with vegetable oil. Roast skin side up at 425F." },
   { id: "t11b", s: T(14,45), d: 45, bg: true, t: "Turkey roasting", who: "",
     x: "Rotate the pan halfway (about 3:10 PM). Start checking at 3:30." },
   { id: "t12", s: T(14,45), d: 40, t: "Make the stuffing", who: "Anthony + an adult",
@@ -334,7 +334,7 @@ const TASKS = [
   { id: "t23b", s: T(16,55), d: 30, bg: true, t: "Soup simmering", who: "",
     x: "Keep at a gentle simmer until dinner." },
   { id: "t24", s: T(16,50), d: 10, t: "Carve turkey; boil the green beans", who: "Michael + Dominic",
-    x: "Check the turkey is above 140F, carve, moisten with hot gravy, hold covered. Boil the beans 4-5 min in 8 qt pot B, drain, toss with olive oil and butter. Uncover the stuffing pans." },
+    x: "Check the turkey is above 140F, carve into an 11x9 foil pan, moisten with hot gravy, cover with foil. Boil the beans 4-5 min in 8 qt pot B, drain, toss with olive oil and butter. Uncover the stuffing pans." },
   { id: "t25", s: T(16,55), d: 10, t: "Hams out; cornbread in; stuffing out", who: "Michael + Leo",
     x: "Hams out at 140F, tent to rest 10-15 min. Cornbread muffins (in foil) into the bottom oven for 5-10 min. Stuffing out when golden (about 5:05)." },
   { id: "t25b", s: T(17,5), d: 10, t: "Put the cold dishes on the table", who: "Everyone",
@@ -342,7 +342,7 @@ const TASKS = [
   { id: "t26a", s: T(17,10), d: 10, t: "Put the hot sides on the table", who: "Everyone",
     x: "Mashed potatoes (out of the cooler; stir in warm milk), stuffing (out of the oven when golden), green beans, and the cornbread muffins (warmed in foil). Set hot dishes on trivets." },
   { id: "t26b", s: T(17,15), d: 10, t: "Put the mains on the table", who: "Michael + Leo",
-    x: "Slice the hams onto a platter. Carved turkey on a platter with hot gravy. Reheat the gravy in the microwave and put it in a pitcher on the table." },
+    x: "Slice the hams (keep extra warm in a foil pan with pan juices) onto a platter. Carved turkey on a platter with hot gravy. Reheat the gravy in the microwave and put it in a pitcher on the table." },
   { id: "t26c", s: T(17,20), d: 10, t: "Soup, pasta, and salad on the table", who: "Everyone",
     x: "Ladle the soup into bowls (or bring the pot to the table), with the pasta in a bowl next to it. Toss the salad with the dressing and put it out. Fill water glasses and call everyone to the table." },
   { id: "t27", s: T(17,30), d: 60, t: "DINNER!", who: "Everyone",
@@ -400,8 +400,8 @@ const ITEMS = [
   { n: "Green beans", track: [[T(17,0), "Pot, covered, hot"], [T(17,10), "On the table"]] },
   { n: "Cornbread muffins (24)", track: [[T(9,48), "Counter, covered in foil"], [T(16,55), "Bottom oven, warming"], [T(17,10), "On the table"]] },
   { n: "Cranberry sauce", track: [[W(17,0), "Fridge, in the can"], [T(16,15), "Opened, sliced in a bowl"], [T(17,5), "On the table"]] },
-  { n: "Kimchi (Halmoni)", track: [[T(15,45), "With Halmoni"], [T(17,5), "On the table"]] },
-  { n: "Italian bread (Ana)", track: [[T(16,0), "With Ana"], [T(17,5), "On the table"]] },
+  { n: "Kimchi (Halmoni)", track: [[W(17,0), "Fridge, already made"], [T(17,5), "On the table"]] },
+  { n: "Italian bread (Ana)", track: [[W(17,0), "Ana has it (2 large loaves)"], [T(17,5), "On the table"]] },
   { n: "Pecorino bowl and butter", track: [[T(16,0), "Counter"], [T(17,5), "On the table"]] },
   { n: "Antipasto and caprese", track: [[T(16,0), "Counter, covered"], [T(16,30), "Platters on the table"]] },
   { n: "Salad (undressed)", track: [[T(16,15), "Bowl, in the fridge"], [T(17,20), "Tossed, on the table"]] },
@@ -672,16 +672,22 @@ if (typeof document !== "undefined") {
     const sim = st.sim;
     const snap = snapshot(sim, done);
 
-    $("clock").textContent = clockStr(sim, true);
-    $("dayText").textContent = dayStr(sim) + ", Nov " + (sim >= 1440 ? 26 : 25);
+    if (st.mode === "live") {   // live: show the actual clock time and date, even before or after the plan
+      const nowD = new Date();
+      $("clock").textContent = nowD.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" });
+      $("dayText").textContent = nowD.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+    } else {
+      $("clock").textContent = clockStr(sim, true);
+      $("dayText").textContent = dayStr(sim) + ", Nov " + (sim >= 1440 ? 26 : 25);
+    }
     const badge = $("modeBadge");
     if (st.mode === "live") { badge.className = "live"; badge.id = "modeBadge"; badge.textContent = "LIVE"; }
     else { badge.className = "sim"; badge.id = "modeBadge"; badge.textContent = st.playing ? "SIM " + st.speed + "x" : "SIM (paused)"; }
     const live = st.mode === "live";
     const sh = (live && st.state === "before") ? st.diff : 0;   // extra time until the plan starts
     $("liveNote").textContent = !live ? "" :
-      st.state === "before" ? "Plan starts in " + longDur(st.diff) + " (clock held at the start)" :
-      st.state === "after" ? "Finished " + longDur(st.diff) + " ago (clock held at the end)" : "";
+      st.state === "before" ? "Plan starts in " + longDur(st.diff) :
+      st.state === "after" ? "Finished " + longDur(st.diff) + " ago" : "";
     $("playBtn").textContent = st.playing ? "Pause" : "Play";
     slider.value = Math.round(minToPos(sim));
     $("daySel").value = sim >= 1440 ? "1440" : "0";
