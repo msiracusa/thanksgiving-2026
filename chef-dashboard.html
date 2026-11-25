@@ -266,9 +266,9 @@ const TASKS = [
     x: "Have in hand: aluminum-free baking powder, Morton salt, vegetable oil, basil, and a half-sheet pan (or roasting pan) with a wire rack that fits on a fridge shelf." },
   { id: "w2", s: W(18,0), d: 20, t: "Dry brine the turkey", who: "Michael",
     x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the rack in the pan, UNCOVERED, on one fridge shelf. You will not rinse it later." },
-  { id: "w3", s: W(19,0), d: 90, t: "Toast the stuffing bread", who: "Michael",
-    x: "Cube 3 loaves of country white bread (about 27 cups). Toast on baking sheets at 300F in batches until golden. Cool, then bag the cubes and leave them on the counter." },
-  { id: "w4", s: W(20,30), d: 30, t: "Set the table and label dishes", who: "Michael + kids",
+  { id: "w3", s: W(19,0), d: 55, t: "Toast the stuffing bread", who: "Michael",
+    x: "Toast the country white bread in the toaster (6 slices per round, about 6 minutes with unloading). Cube each batch while the next one toasts. 3 loaves (about 45 slices, 27 cups of cubes) is what the stuffing needs; the 4th loaf is a spare. Bag the cubes and leave them on the counter." },
+  { id: "w4", s: W(20,0), d: 30, t: "Set the table and label dishes", who: "Michael + kids",
     x: "Set the table and the kids' table. Put out serving dishes and label each one." },
 
   { id: "t1", s: T(9,0), d: 20, t: "Dressing, glaze, and chestnuts", who: "Michael",
@@ -360,7 +360,6 @@ TASKS.forEach(t => { t.e = t.s + t.d; });
 
 // oven segments: s,e minutes; what's in the oven
 const OVEN_BOTTOM = [
-  { s: W(19,0), e: W(20,30), temp: "300F", state: "Baking", what: "Bread cubes toasting (batches on baking sheets)" },
   { s: T(9,15), e: T(9,30), temp: "375F", state: "Preheating", what: "Empty, preheating for the cornbread" },
   { s: T(9,30), e: T(9,48), temp: "375F", state: "Baking", what: "2 muffin tins of cornbread (18 min)" },
   { s: T(14,15), e: T(14,30), temp: "425F", state: "Preheating", what: "Empty, preheating for the turkey" },
@@ -406,7 +405,7 @@ const ITEMS = [
   { n: "Soup (16 qt pot)", track: [[T(15,10), "Stove, covered, heat off"], [T(16,45), "Stove, reheating"], [T(17,20), "In bowls on the table"]] },
   { n: "Chestnuts", track: [[T(9,20), "Counter, scored"], [T(18,30), "Bottom oven"], [T(19,0), "Peeled, on the table"]] },
   { n: "Apple pie", track: [[W(17,0), "Fridge"], [T(18,55), "Counter, ready to cut"], [T(19,0), "On the table"]] },
-  { n: "Toasted bread cubes (27 cups)", end: T(15,30), track: [[W(20,30), "Counter, in bags"], [T(14,45), "In the stuffing mix"]] },
+  { n: "Toasted bread cubes (27 cups)", end: T(15,30), track: [[W(19,55), "Counter, in bags"], [T(14,45), "In the stuffing mix"]] },
   { n: "Salad dressing", end: T(17,25), track: [[T(9,20), "Counter, in a jar"], [T(17,20), "Tossed on the salad"]] },
   { n: "Ham glaze", end: T(17,0), track: [[T(9,20), "Counter, in a bowl"], [T(16,40), "On the hams"]] },
   { n: "Chopped celery and onion", end: T(15,0), track: [[T(11,0), "Counter, covered"], [T(14,45), "In the stuffing"]] },
