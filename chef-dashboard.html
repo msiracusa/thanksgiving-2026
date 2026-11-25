@@ -36,7 +36,8 @@ button.ok { background: var(--ok); color: #05281a; font-weight: 700; border-colo
 #ticks i { position: absolute; top: 0; width: 2px; height: 100%; background: #3a4a60; }
 #ticks i.done { background: var(--ok); }
 #slider { width: 100%; margin: 0; accent-color: var(--accent); height: 2.2vh; }
-.sliderlabels { display: flex; justify-content: space-between; font-size: clamp(10px, 0.85vw, 15px); color: var(--mute); }
+.sliderlabels { position: relative; height: 1.5em; font-size: clamp(10px, min(0.85vw, 1.6vh), 15px); color: var(--mute); }
+.sliderlabels span { position: absolute; top: 0; white-space: nowrap; }
 
 /* main */
 main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr); gap: 1vw; min-height: 0; }
@@ -183,6 +184,7 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
         <option value="1">1x</option><option value="10">10x</option><option value="30">30x</option>
         <option value="60" selected>60x</option><option value="180">180x</option><option value="600">600x</option>
       </select>
+      <button id="scaleBtn" title="S">Scale: stretched</button>
       <button id="undoBtn" title="U">Undo done</button>
       <button id="doneListBtn" title="L">Done list</button>
       <button id="fsBtn" title="F">Full screen</button>
@@ -193,7 +195,7 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
   <div class="sliderrow">
     <div id="ticks"></div>
     <input type="range" id="slider" step="1">
-    <div class="sliderlabels"><span>Wed 5 PM</span><span>Wed 9 PM</span><span>Thu 9 AM</span><span>Thu 1 PM</span><span>Thu 5 PM</span><span>Thu 8 PM</span></div>
+    <div class="sliderlabels" id="sliderLabels"></div>
   </div>
 
   <main>
@@ -305,6 +307,8 @@ const TASKS = [
     x: "Puree 3-4 ladles of soup in the food processor and stir back in. Turn off the heat, cover, and leave it on the stove." },
   { id: "t14", s: T(15,5), d: 5, t: "Hams out of the fridge", who: "Leo",
     x: "Take out all three hams to take the chill off (about 45 minutes before they go in)." },
+  { id: "t14b", s: T(15,35), d: 10, t: "Score the hams", who: "Leo + an adult",
+    x: "Score the top of each ham in a diamond pattern: shallow cuts about 1/4 inch deep and 1 inch apart, so the glaze can drip down into the ham. Then set the hams in the pan with 1/8 inch of water." },
   { id: "t15", s: T(15,30), d: 45, t: "Check the turkey and pull it", who: "Michael",
     x: "Pull each breast when the thickest part (away from the bone) reaches 158F, about 3:50-4:15. Move to a clean pan, pour the drippings into a pot, tent loosely with foil. After 15 minutes check that it reaches 165F." },
   { id: "t16", s: T(15,35), d: 10, t: "Potatoes to the cooler; top oven to 325F", who: "Carmine",
@@ -312,7 +316,7 @@ const TASKS = [
   { id: "t17", s: T(15,45), d: 15, t: "Make the gravy", who: "Michael",
     x: "8 qt pot A: skim the fat (6-8 tbsp; top up with unsalted butter), whisk in 6-8 tbsp flour for 2 min, whisk in the drippings and about 5 cups warm unsalted stock, simmer 8-10 min. Taste before salting. Pour into a pitcher." },
   { id: "t18", s: T(15,50), d: 10, t: "Hams into the TOP oven", who: "Leo",
-    x: "Three hams in the pan with about 1/8 inch of water, covered tightly with foil, at 325F. About 50 minutes covered." },
+    x: "Scored hams in the pan with about 1/8 inch of water, covered tightly with foil, at 325F. About 50 minutes covered." },
   { id: "t18b", s: T(16,0), d: 40, bg: true, t: "Hams baking, covered", who: "",
     x: "At 4:40 you uncover and glaze." },
   { id: "t19", s: T(16,0), d: 30, t: "Antipasto and salad prep", who: "Michael + helpers",
@@ -389,7 +393,7 @@ const BURNERS = [
 // Prepared items: [from, location] in order. cat is the chip color
 const ITEMS = [
   { n: "Dry-brined turkey (2 breasts)", track: [[W(18,20), "Fridge, uncovered on a rack"], [T(13,45), "Counter, tempering"], [T(14,40), "Bottom oven"], [T(16,0), "Counter, resting under foil"], [T(16,50), "Carved, held hot with gravy"], [T(17,15), "Sliced, on the table"]] },
-  { n: "Hams (3)", track: [[W(17,0), "Fridge"], [T(15,5), "Counter, tempering"], [T(15,55), "Top oven"], [T(16,55), "Resting under foil"], [T(17,15), "Sliced, on the table"]] },
+  { n: "Hams (3)", track: [[W(17,0), "Fridge"], [T(15,5), "Counter, tempering"], [T(15,35), "Counter, being scored"], [T(15,55), "Top oven"], [T(16,55), "Resting under foil"], [T(17,15), "Sliced, on the table"]] },
   { n: "Gravy", track: [[T(16,0), "Pitcher on the counter"], [T(17,10), "Reheated in the microwave"], [T(17,15), "On the table"]] },
   { n: "Stuffing (3 pans)", track: [[T(15,25), "Counter, covered in foil"], [T(16,20), "Bottom oven"], [T(17,10), "On the table"]] },
   { n: "Mashed potatoes (2 dishes)", track: [[T(13,30), "Top oven (200F), covered"], [T(15,35), "Cooler, wrapped in towels"], [T(17,10), "On the table"]] },
@@ -445,6 +449,35 @@ function realNowMin(d) {
   if (t > RANGE_END) return { min: RANGE_END, state: "after", diff: t - RANGE_END };
   return { min: t, state: "inside", diff: 0 };
 }
+// Non-linear slider: quiet stretches are squeezed and the busy Thursday afternoon gets most of the width.
+// w = share of the slider (percent). Slider positions run 0-1000.
+const SCALE = [
+  { a: W(17,0),  b: W(21,0),  w: 9 },    // Wed evening
+  { a: W(21,0),  b: T(9,0),   w: 2 },    // overnight (a big jump)
+  { a: T(9,0),   b: T(12,30), w: 10 },   // Thu morning
+  { a: T(12,30), b: T(15,0),  w: 14 },   // Thu early afternoon
+  { a: T(15,0),  b: T(17,30), w: 50 },   // the intense stretch
+  { a: T(17,30), b: T(20,0),  w: 15 }    // dinner and dessert
+];
+(function () { let p = 0; SCALE.forEach(g => { g.p0 = p; g.p1 = p + g.w * 10; p = g.p1; }); })();
+const LINEAR = [{ a: RANGE_START, b: RANGE_END, w: 100, p0: 0, p1: 1000 }];
+let activeScale = SCALE;
+function useScale(mode) { activeScale = mode === "linear" ? LINEAR : SCALE; }
+function minToPos(min) {
+  const g = activeScale.find(x => min <= x.b) || activeScale[activeScale.length - 1];
+  return g.p0 + clamp((min - g.a) / (g.b - g.a), 0, 1) * (g.p1 - g.p0);
+}
+function posToMin(pos) {
+  const g = activeScale.find(x => pos <= x.p1) || activeScale[activeScale.length - 1];
+  return g.a + clamp((pos - g.p0) / (g.p1 - g.p0), 0, 1) * (g.b - g.a);
+}
+const SLIDER_LABELS = [
+  [W(17,0), "Wed 5 PM", "l"], [W(21,0), "9 PM", "r"], [T(9,0), "Thu 9 AM", "l"], [T(12,30), "12:30", "c"], [T(15,0), "3 PM", "c"],
+  [T(16,0), "4 PM", "c"], [T(17,0), "5 PM", "c"], [T(17,30), "Dinner", "c"], [T(20,0), "8 PM", "r"]
+];
+const LINEAR_LABELS = [
+  [W(17,0), "Wed 5 PM", "l"], [W(21,0), "Wed 9 PM", "c"], [T(1,0), "Thu 1 AM", "c"], [T(5,0), "5 AM", "c"], [T(9,0), "Thu 9 AM", "c"], [T(13,0), "1 PM", "c"], [T(17,0), "5 PM", "c"], [T(20,0), "8 PM", "r"]
+];
 function segAt(list, sim) { return list.find(g => g.s <= sim && sim < g.e) || null; }
 function segNext(list, sim) { return list.filter(g => g.s > sim).sort((a, b) => a.s - b.s)[0] || null; }
 function locAt(item, sim) {
@@ -498,15 +531,31 @@ if (typeof document !== "undefined") {
   document.title = APP_NAME + " - Thanksgiving 2026";
   $("appName").textContent = APP_NAME;
   const slider = $("slider");
-  slider.min = RANGE_START; slider.max = RANGE_END; slider.step = 1;
+  slider.min = 0; slider.max = 1000; slider.step = 1;
+  let scaleMode = "stretched";   // the non-linear scale is always the default on load
+  useScale(scaleMode);
+  function buildLabels() {
+    const list = scaleMode === "linear" ? LINEAR_LABELS : SLIDER_LABELS;
+    $("sliderLabels").innerHTML = list.map(l => {
+      const left = minToPos(l[0]) / 10, tf = l[2] === "c" ? "translateX(-50%)" : l[2] === "r" ? "translateX(-100%)" : "none";
+      return '<span style="left:' + left + '%;transform:' + tf + '">' + l[1] + "</span>";
+    }).join("");
+    $("scaleBtn").textContent = "Scale: " + (scaleMode === "linear" ? "linear" : "stretched");
+  }
+  function toggleScale() {
+    scaleMode = scaleMode === "linear" ? "stretched" : "linear";
+    useScale(scaleMode);
+    buildTicks(); buildLabels(); render();
+  }
 
   function buildTicks() {
     $("ticks").innerHTML = STARTS.map(s => {
-      const left = ((s - RANGE_START) / (RANGE_END - RANGE_START)) * 100;
+      const left = minToPos(s) / 10;
       return '<i style="left:' + left + '%"></i>';
     }).join("");
   }
   buildTicks();
+  buildLabels();
 
   function setSim(min, keepMode) {
     st.sim = clamp(min, RANGE_START, RANGE_END);
@@ -543,7 +592,7 @@ if (typeof document !== "undefined") {
       $("modalBody").innerHTML = "<table>" + [
         ["\u2190 / \u2192", "Previous / next step"], ["\u2191 / \u2193", "Move time 5 minutes (Shift: 30 minutes)"],
         ["D", "Mark the current step done"], ["U", "Undo the last done"], ["L", "Open the done list (unmark any step)"],
-        ["N", "Snap to the real time (live)"], ["Space", "Play / pause the simulation"], ["F", "Full screen"], ["?", "This help"], ["Esc", "Close a popup"]
+        ["N", "Snap to the real time (live)"], ["S", "Switch the slider between stretched and linear time"], ["Space", "Play / pause the simulation"], ["F", "Full screen"], ["?", "This help"], ["Esc", "Close a popup"]
       ].map(r => '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td></tr>").join("") + "</table>";
       $("modalActions").innerHTML = '<button id="mClose">Close</button>';
     } else {
@@ -563,6 +612,7 @@ if (typeof document !== "undefined") {
   $("mNext").onclick = () => step(1);
   $("mNow").onclick = goNow;
   $("mDone").onclick = toggleDone;
+  $("scaleBtn").onclick = toggleScale;
   $("undoBtn").onclick = undoDone;
   $("doneListBtn").onclick = () => openModal("done");
   $("helpBtn").onclick = () => openModal("help");
@@ -633,7 +683,7 @@ if (typeof document !== "undefined") {
       st.state === "before" ? "Plan starts in " + longDur(st.diff) + " (clock held at the start)" :
       st.state === "after" ? "Finished " + longDur(st.diff) + " ago (clock held at the end)" : "";
     $("playBtn").textContent = st.playing ? "Pause" : "Play";
-    slider.value = Math.round(sim);
+    slider.value = Math.round(minToPos(sim));
     $("daySel").value = sim >= 1440 ? "1440" : "0";
     const m = ((sim % 1440) + 1440) % 1440;
     if (document.activeElement !== $("timeIn")) $("timeIn").value = pad(Math.floor(m / 60)) + ":" + pad(Math.floor(m % 60));
@@ -738,7 +788,7 @@ if (typeof document !== "undefined") {
   setInterval(tick, 250);
 
   // controls
-  slider.addEventListener("input", () => { setSim(+slider.value); slider.blur(); });
+  slider.addEventListener("input", () => { setSim(posToMin(+slider.value)); slider.blur(); });
   $("nowBtn").onclick = goNow;
   $("prevBtn").onclick = () => step(-1);
   $("nextBtn").onclick = () => step(1);
@@ -767,6 +817,7 @@ if (typeof document !== "undefined") {
     else if (k === "ArrowUp") { e.preventDefault(); setSim(st.sim + (e.shiftKey ? 30 : 5)); }
     else if (k === "ArrowDown") { e.preventDefault(); setSim(st.sim - (e.shiftKey ? 30 : 5)); }
     else if (k === "d" || k === "D") { e.preventDefault(); toggleDone(); }
+    else if (k === "s" || k === "S") { e.preventDefault(); toggleScale(); }
     else if (k === "u" || k === "U") { e.preventDefault(); undoDone(); }
     else if (k === "l" || k === "L") { e.preventDefault(); openModal("done"); }
     else if (k === "?") { e.preventDefault(); openModal("help"); }
@@ -778,7 +829,7 @@ if (typeof document !== "undefined") {
   render();
 }
 
-if (typeof module !== "undefined") module.exports = { TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
+if (typeof module !== "undefined") module.exports = { minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
 </script>
 </body>
 </html>
