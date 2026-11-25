@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chef Dashboard - Thanksgiving 2026</title>
+<style>
+:root {
+  --bg: #0d1117; --panel: #161c25; --panel2: #1d2531; --ink: #eef2f7; --mute: #8e9bad;
+  --accent: #ffb020; --ok: #3ecf8e; --bad: #ff5d5d; --cold: #5aa9ff; --hot: #ff8a3d; --line: #263140; --fit: 1;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+#app { display: grid; grid-template-rows: 11vh 6vh minmax(0, 1fr) 13vh; height: 100vh; gap: 1vh; padding: 1vh 1.2vw; }
+
+/* header */
+header { display: grid; grid-template-columns: minmax(0, 0.9fr) auto minmax(0, 2.4fr); align-items: center; gap: 1vw; min-height: 0; overflow: hidden; }
+.brand { align-self: start; white-space: nowrap; line-height: 1.25; font-size: clamp(11px, min(1.1vw, 1.8vh), 22px); color: var(--mute); letter-spacing: 0.04em; text-transform: uppercase; }
+.brand b { color: var(--accent); }
+.clockbox { text-align: center; }
+#clock { font-size: clamp(26px, min(4.6vw, 7.5vh), 88px); font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+#day { font-size: clamp(11px, min(1.2vw, 1.8vh), 22px); color: var(--mute); margin-top: 0.3vh; }
+#modeBadge { display: inline-block; font-size: clamp(11px, 1vw, 18px); font-weight: 700; padding: 0.15em 0.6em; border-radius: 999px; margin-left: 0.6em; vertical-align: middle; }
+.live { background: var(--ok); color: #05281a; } .sim { background: var(--accent); color: #2c1c00; }
+.controls { display: flex; flex-wrap: wrap; gap: 0.5vw; justify-content: flex-end; align-items: center; }
+button, select, input[type=time] { background: var(--panel2); color: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+  font-size: clamp(11px, 0.9vw, 17px); padding: 0.35em 0.65em; cursor: pointer; font-family: inherit; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); color: #2c1c00; font-weight: 700; border-color: var(--accent); }
+button.ok { background: var(--ok); color: #05281a; font-weight: 700; border-color: var(--ok); }
+
+/* slider */
+.sliderrow { position: relative; padding: 0 0.4vw; min-height: 0; overflow: hidden; }
+#ticks { position: relative; height: 1.4vh; }
+#ticks i { position: absolute; top: 0; width: 2px; height: 100%; background: #3a4a60; }
+#ticks i.done { background: var(--ok); }
+#slider { width: 100%; margin: 0; accent-color: var(--accent); height: 2.2vh; }
+.sliderlabels { display: flex; justify-content: space-between; font-size: clamp(10px, 0.85vw, 15px); color: var(--mute); }
+
+/* main */
+main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr); gap: 1vw; min-height: 0; }
+.col { display: flex; flex-direction: column; gap: 1vh; min-height: 0; }
+.card { overflow-wrap: anywhere; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 1.2vh 1.1vw; min-height: 0; overflow: hidden; }
+.card h3 { margin: 0 0 0.8vh; font-size: clamp(11px, 0.95vw, 17px); letter-spacing: 0.1em; text-transform: uppercase; color: var(--mute); font-weight: 600; }
+#nowCard { flex: 2.4 1 0; display: flex; flex-direction: column; border-color: var(--accent); min-height: 0; overflow: hidden; }
+#nowTitle { flex: 0 0 auto; }
+#nowTitle { font-size: calc(clamp(22px, 3.4vw, 66px) * var(--fit)); font-weight: 800; line-height: 1.05; margin: 0.4vh 0 0.6vh; }
+#nowMeta { font-size: clamp(12px, 1.2vw, 22px); color: var(--accent); margin-bottom: 1vh; flex: 0 0 auto; }
+#nowDetail { font-size: calc(clamp(13px, 1.6vw, 30px) * var(--fit)); line-height: 1.3; color: #d6deea; overflow: hidden; flex: 1 1 auto; min-height: 0; }
+#timerWrap { flex: 0 0 auto; padding-top: 1vh; }
+#timer { text-align: left; font-size: clamp(30px, min(4.8vw, 11vh), 100px); font-weight: 800; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; line-height: 1; white-space: nowrap; }
+#timer.over { color: var(--bad); }
+#timerLabel { font-size: clamp(12px, 1.1vw, 20px); color: var(--mute); }
+.bar { height: 1.4vh; background: #232d3b; border-radius: 999px; overflow: hidden; margin: 1vh 0; }
+.bar > div { height: 100%; background: var(--accent); width: 0; }
+.timerrow { display: flex; align-items: center; justify-content: space-between; gap: 1.2vw; }
+.timerleft { min-width: 0; }
+#doneBtn { font-size: clamp(14px, 1.5vw, 28px); padding: 0.7em 1.1em; flex: 0 1 30%; line-height: 1.15; }
+#alsoCard { flex: 1 1 0; }
+.row { display: flex; justify-content: space-between; gap: 0.8vw; font-size: clamp(12px, 1.1vw, 20px); padding: 0.35vh 0; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row .t { color: var(--ink); } .row .r { color: var(--mute); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row.late .t, .row.late .r { color: var(--bad); }
+.inner { transform-origin: top left; }
+#liveNote { font-size: clamp(11px, min(1.1vw, 1.7vh), 20px); color: var(--accent); margin-top: 0.3vh; min-height: 1.2em; font-variant-numeric: tabular-nums; }
+.empty { color: var(--mute); font-size: clamp(12px, 1.05vw, 19px); }
+
+/* ovens */
+.oven { flex: 1 1 0; }
+.oven .top { display: flex; justify-content: space-between; align-items: baseline; }
+.oven .name { font-size: clamp(13px, 1.2vw, 22px); font-weight: 700; }
+.oven .temp { font-size: clamp(22px, 2.6vw, 50px); font-weight: 800; font-variant-numeric: tabular-nums; }
+.oven .what { font-size: clamp(13px, 1.3vw, 25px); line-height: 1.25; }
+.oven .state { font-size: clamp(11px, 0.95vw, 17px); color: var(--mute); }
+.oven.on { border-color: var(--hot); } .oven.on .temp { color: var(--hot); }
+.oven.off .temp { color: var(--mute); }
+.mini { font-size: clamp(11px, 0.95vw, 17px); color: var(--mute); }
+#burnCard { flex: 1.2 1 0; }
+.burnwrap { display: flex; gap: 1.2vw; align-items: center; }
+.stove { display: flex; flex-direction: column; gap: 0.6vh; flex: 0 0 auto; }
+.stove .rowb { display: flex; justify-content: center; gap: 0.5vw; }
+.bc { border-radius: 50%; border: 2px solid #3a475a; color: #5d6b80; display: flex; align-items: center; justify-content: center; font-weight: 800; background: #1d2531; }
+.bc.small { width: clamp(24px, 2.3vw, 44px); height: clamp(24px, 2.3vw, 44px); font-size: clamp(11px, 1.1vw, 20px); }
+.bc.large { width: clamp(32px, 3.1vw, 58px); height: clamp(32px, 3.1vw, 58px); font-size: clamp(13px, 1.4vw, 26px); }
+.bc.on { color: #0d1117; border-color: transparent; }
+.blist { flex: 1 1 auto; min-width: 0; }
+.blist .brow { display: flex; align-items: baseline; gap: 0.6vw; font-size: clamp(11px, 1vw, 19px); padding: 0.3vh 0; border-bottom: 1px solid var(--line); }
+.blist .brow:last-child { border-bottom: 0; }
+.blist .brow i { font-style: normal; font-weight: 800; border-radius: 50%; width: 1.5em; height: 1.5em; display: inline-flex; align-items: center; justify-content: center; color: #0d1117; flex: 0 0 auto; }
+.blist .brow .what { flex: 1 1 auto; font-size: inherit; line-height: 1.15; }
+.blist .brow .what small { color: var(--mute); }
+.blist .brow .tm { color: var(--mute); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dots { display: flex; gap: 0.4vw; margin-bottom: 0.6vh; }
+.dots span { width: 1.6vw; height: 1.6vw; max-width: 28px; max-height: 28px; border-radius: 50%; background: #2a3444; border: 2px solid #3a475a; }
+.dots span.on { background: var(--hot); border-color: var(--hot); }
+
+/* prepared */
+#prepCard { flex: 1 1 0; }
+#prepList.two { column-count: 2; column-gap: 1vw; }
+#prepList.two .item { break-inside: avoid; }
+#prepList { overflow: hidden; }
+.item { display: flex; justify-content: space-between; gap: 0.6vw; font-size: clamp(11px, 1vw, 19px); padding: 0.45vh 0; border-bottom: 1px solid var(--line); line-height: 1.2; }
+.item:last-child { border-bottom: 0; }
+.chip { font-size: clamp(10px, 0.85vw, 15px); padding: 0.1em 0.55em; border-radius: 999px; background: #2a3444; color: #cfd8e6; text-align: right; max-width: 55%; }
+.chip.fridge { background: #17324f; color: #9fcbff; } .chip.oven { background: #4a2a12; color: #ffc08a; }
+.chip.cooler { background: #12404a; color: #8be3f2; } .chip.stove { background: #4a1d1d; color: #ffa8a8; }
+.chip.table { background: #12412e; color: #8ff0c2; } .chip.counter { background: #2f3441; color: #cfd8e6; }
+
+/* footer */
+footer { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 2fr); gap: 1vw; min-height: 0; overflow: hidden; }
+#nextCard { border-color: #3b4a60; }
+#nextTitle { font-size: clamp(14px, min(1.5vw, 2.5vh), 28px); font-weight: 700; line-height: 1.1; }
+#nextWhen { font-size: clamp(11px, min(1.05vw, 1.9vh), 20px); color: var(--cold); margin-top: 0.4vh; font-variant-numeric: tabular-nums; }
+#upcoming .row { font-size: clamp(11px, min(1vw, 1.8vh), 18px); padding: 0.2vh 0; }
+.keys { font-size: clamp(10px, 0.85vw, 15px); color: var(--mute); margin-top: 0.6vh; }
+kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4px; padding: 0 0.4em; font-family: inherit; }
+
+#modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 10; }
+#modal[hidden] { display: none; }
+#modal .box { background: var(--panel); border: 1px solid var(--accent); border-radius: 14px; padding: 2vh 2vw; width: min(720px, 92vw); max-height: 86vh; overflow: auto; }
+#modal h2 { margin: 0 0 1.2vh; font-size: clamp(16px, 1.6vw, 28px); }
+#modal table { width: 100%; border-collapse: collapse; font-size: clamp(13px, 1.1vw, 20px); }
+#modal td { padding: 0.5vh 0.4vw; border-bottom: 1px solid var(--line); vertical-align: middle; }
+#modal td.k { white-space: nowrap; color: var(--accent); }
+#modal .actions { margin-top: 1.4vh; display: flex; gap: 0.8vw; justify-content: flex-end; }
+@media (max-width: 900px) {
+  html, body { overflow: auto; }
+  #app { height: auto; }
+  main, footer { grid-template-columns: 1fr; }
+  header { grid-template-columns: 1fr; text-align: center; }
+  .controls { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand"><b id="appName">Chef Dashboard</b><br>Thanksgiving 2026<br>Dinner 5:30 PM</div>
+    <div class="clockbox">
+      <div id="clock">--:--</div>
+      <div id="day"><span id="dayText"></span><span id="modeBadge" class="live">LIVE</span></div>
+      <div id="liveNote"></div>
+    </div>
+    <div class="controls">
+      <select id="daySel" title="Day"><option value="0">Wed</option><option value="1440" selected>Thu</option></select>
+      <input type="time" id="timeIn" title="Set the time">
+      <button id="prevBtn" title="Left arrow">&larr; Prev step</button>
+      <button id="nextBtn" title="Right arrow">Next step &rarr;</button>
+      <button id="nowBtn" class="primary" title="N">Now</button>
+      <button id="playBtn" title="Space">Play</button>
+      <select id="speedSel" title="Speed">
+        <option value="1">1x</option><option value="10">10x</option><option value="30">30x</option>
+        <option value="60" selected>60x</option><option value="180">180x</option><option value="600">600x</option>
+      </select>
+      <button id="undoBtn" title="U">Undo done</button>
+      <button id="doneListBtn" title="L">Done list</button>
+      <button id="fsBtn" title="F">Full screen</button>
+      <button id="helpBtn" title="?">?</button>
+    </div>
+  </header>
+
+  <div class="sliderrow">
+    <div id="ticks"></div>
+    <input type="range" id="slider" step="1">
+    <div class="sliderlabels"><span>Wed 5 PM</span><span>Wed 9 PM</span><span>Thu 9 AM</span><span>Thu 1 PM</span><span>Thu 5 PM</span><span>Thu 8 PM</span></div>
+  </div>
+
+  <main>
+    <div class="col">
+      <section class="card" id="nowCard">
+        <h3 id="nowLabel">Now</h3>
+        <div id="nowTitle">-</div>
+        <div id="nowMeta"></div>
+        <div id="nowDetail"></div>
+        <div id="timerWrap">
+          <div class="timerrow">
+            <div class="timerleft">
+              <div id="timerLabel">time left on this step</div>
+              <div id="timer">0:00</div>
+            </div>
+            <button id="doneBtn" class="ok">Mark done (D)</button>
+          </div>
+          <div class="bar"><div id="barFill"></div></div>
+        </div>
+      </section>
+      <section class="card" id="alsoCard"><div class="inner">
+        <h3>Also happening / running</h3>
+        <div id="alsoList"></div>
+      </div></section>
+    </div>
+
+    <div class="col">
+      <section class="card oven" id="ovenBottom"><div class="inner" id="ovenBottomIn"></div></section>
+      <section class="card oven" id="ovenTop"><div class="inner" id="ovenTopIn"></div></section>
+      <section class="card" id="burnCard"><div class="inner" id="burnIn"></div></section>
+    </div>
+
+    <div class="col">
+      <section class="card" id="prepCard"><div class="inner">
+        <h3>Prepared and where it is</h3>
+        <div id="prepList"></div>
+      </div></section>
+    </div>
+  </main>
+
+  <footer>
+    <section class="card" id="nextCard"><div class="inner">
+      <h3>Next step</h3>
+      <div id="nextTitle">-</div>
+      <div id="nextWhen"></div>
+      <div class="keys">Press <kbd>?</kbd> for keyboard shortcuts</div>
+    </div></section>
+    <section class="card" id="upCard"><div class="inner">
+      <h3>Coming up after that</h3>
+      <div id="upcoming"></div>
+    </div></section>
+  </footer>
+</div>
+
+<div id="modal" hidden><div class="box"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="actions" id="modalActions"></div></div></div>
+
+<script>
+// ===================== DATA =====================
+const APP_NAME = "Chef Dashboard";   // change this to rename the page
+
+const W = (h, m = 0) => h * 60 + m;          // Wednesday Nov 25, minutes from midnight
+const T = (h, m = 0) => 1440 + h * 60 + m;   // Thursday Nov 26
+const RANGE_START = W(17, 0), RANGE_END = T(20, 0);
+
+// s = start, d = duration in minutes, bg = background (running on its own, not hands-on)
+const TASKS = [
+  { id: "w1", s: W(17,30), d: 15, t: "Check your supplies", who: "Michael",
+    x: "Have in hand: aluminum-free baking powder, Morton salt, vegetable oil, basil, and a half-sheet pan (or roasting pan) with a wire rack that fits on a fridge shelf." },
+  { id: "w2", s: W(18,0), d: 20, t: "Dry brine the turkey", who: "Michael",
+    x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the rack in the pan, UNCOVERED, on one fridge shelf. You will not rinse it later." },
+  { id: "w3", s: W(19,0), d: 90, t: "Toast the stuffing bread", who: "Michael",
+    x: "Cube 3 loaves of country white bread (about 27 cups). Toast on baking sheets at 300F in batches until golden. Cool, then bag the cubes and leave them on the counter." },
+  { id: "w4", s: W(20,30), d: 30, t: "Set the table and label dishes", who: "Michael + kids",
+    x: "Set the table and the kids' table. Put out serving dishes and label each one." },
+
+  { id: "t1", s: T(9,0), d: 20, t: "Dressing, glaze, and chestnuts", who: "Michael",
+    x: "Salad dressing: 3/4 cup olive oil, 1/2 cup lemon juice (about 3 lemons), 1 1/2 tsp salt, 1-2 tsp sugar, pepper, shaken in a jar. Ham glaze: 1 cup brown sugar, 1/4 cup Dijon or honey, 2-3 tbsp water or apple juice. Cut an X in each chestnut. Leave all on the counter. At 9:15 set the BOTTOM oven to 375F for the cornbread." },
+  { id: "t2", s: T(9,30), d: 20, t: "Bake the cornbread muffins", who: "Michael",
+    x: "2 box mixes (per box: 2 eggs, 1/3 cup butter, 1/2 cup milk). Fill 2 muffin tins (12 each). Bake in the BOTTOM oven at 375F for 18 minutes. Cool, then cover tightly with foil." },
+  { id: "t3", s: T(10,30), d: 30, t: "Chop the stuffing celery and onion", who: "Anthony + an adult",
+    x: "6 large celery stalks and 3 medium onions. Keep covered on the counter." },
+  { id: "t4", s: T(11,30), d: 70, t: "Peel and chop potatoes and soup vegetables", who: "Carmine, Dominic, Michael",
+    x: "Peel and cut 8-9 lb potatoes into 2-inch chunks, in cold salted water. Soup: chop 3 onions, 9 celery stalks, about 1 lb baby carrots (sliced), 3/4 head cabbage (shredded), 6 zucchini; dice 6 potatoes (keep in water)." },
+  { id: "t5", s: T(12,50), d: 25, t: "Boil the mashing potatoes", who: "Carmine",
+    x: "10 qt pot, salted water, boil 15-20 minutes until fork-tender. Burner 1." },
+  { id: "t6", s: T(13,15), d: 15, t: "Mash the potatoes and fill 2 dishes", who: "Carmine",
+    x: "Drain and dry in the pot 1-2 min. Warm 4 sticks butter + 2-3 cups milk (microwave). Mash, adding gradually. Spread into the 9x13x1.5 and the 8x8x2.5 Pyrex, dot with butter, cover tightly with foil." },
+  { id: "t7", s: T(13,30), d: 5, t: "Potatoes into the TOP oven (200F)", who: "Michael",
+    x: "Set the top oven to 200F. Put in both covered dishes to hold hot. Set hot glass on a towel, not a cold surface." },
+  { id: "t7b", s: T(13,35), d: 120, bg: true, t: "Potatoes holding hot in the top oven", who: "",
+    x: "Nothing to do. They come out at 3:35 PM." },
+  { id: "t8", s: T(13,45), d: 15, t: "Turkey out of the fridge", who: "Michael",
+    x: "Take the pan with both breasts out of the fridge. Blot any wet spots. Do NOT rinse and do NOT add more salt." },
+  { id: "t9", s: T(13,45), d: 15, t: "Start the soup", who: "Michael",
+    x: "16 qt pot: 1 tbsp olive oil, sauté 3 onions, garlic, parsley. Add diluted tomato paste (3 tbsp in 3 cups warm water), salt and pepper, then the vegetables and 4 1/2 qt stock. Bring to a simmer. Burner 2." },
+  { id: "t9b", s: T(14,0), d: 60, bg: true, t: "Soup simmering", who: "",
+    x: "Simmer 45-60 minutes until the vegetables are tender. Stir now and then." },
+  { id: "t10", s: T(14,15), d: 15, t: "Preheat the BOTTOM oven to 425F", who: "Michael",
+    x: "Use 400F if the oven is convection. Rack in the lower-middle position." },
+  { id: "t11", s: T(14,30), d: 15, t: "Turkey into the bottom oven", who: "Michael",
+    x: "Pour about 1 cup stock or water under the rack, add herb sprigs and orange zest strips. Brush the breasts lightly with vegetable oil. Roast skin side up at 425F." },
+  { id: "t11b", s: T(14,45), d: 45, bg: true, t: "Turkey roasting", who: "",
+    x: "Rotate the pan halfway (about 3:10 PM). Start checking at 3:30." },
+  { id: "t12", s: T(14,45), d: 40, t: "Make the stuffing", who: "Anthony + an adult",
+    x: "Large saucepan: melt 2 1/4 cups butter, cook the celery and onion 6-8 min. Toss with the bread cubes, 1 1/2 cups golden raisins, 3 diced Granny Smith apples (squeeze of lemon), 1 1/2 tbsp thyme, 2 tbsp chopped fresh sage, 1 tsp salt, pepper. Fill loosely: 9x13x3 (12 cups), 9x13x2.5 (10 cups), 8x8 (5 cups). Cover with foil, leave on the counter." },
+  { id: "t13", s: T(15,0), d: 10, t: "Puree a little soup; cover and rest", who: "Michael",
+    x: "Puree 3-4 ladles of soup in the food processor and stir back in. Turn off the heat, cover, and leave it on the stove." },
+  { id: "t14", s: T(15,5), d: 5, t: "Hams out of the fridge", who: "Leo",
+    x: "Take out all three hams to take the chill off (about 45 minutes before they go in)." },
+  { id: "t15", s: T(15,30), d: 45, t: "Check the turkey and pull it", who: "Michael",
+    x: "Pull each breast when the thickest part (away from the bone) reaches 158F, about 3:50-4:15. Move to a clean pan, pour the drippings into a pot, tent loosely with foil. After 15 minutes check that it reaches 165F." },
+  { id: "t16", s: T(15,35), d: 10, t: "Potatoes to the cooler; top oven to 325F", who: "Carmine",
+    x: "Take the covered dishes out of the top oven, wrap in towels in a cooler to stay above 140F. Set the TOP oven to 325F." },
+  { id: "t17", s: T(15,45), d: 15, t: "Make the gravy", who: "Michael",
+    x: "8 qt pot A: skim the fat (6-8 tbsp; top up with unsalted butter), whisk in 6-8 tbsp flour for 2 min, whisk in the drippings and about 5 cups warm unsalted stock, simmer 8-10 min. Taste before salting. Pour into a pitcher." },
+  { id: "t18", s: T(15,50), d: 10, t: "Hams into the TOP oven", who: "Leo",
+    x: "Three hams in the pan with about 1/8 inch of water, covered tightly with foil, at 325F. About 50 minutes covered." },
+  { id: "t18b", s: T(16,0), d: 40, bg: true, t: "Hams baking, covered", who: "",
+    x: "At 4:40 you uncover and glaze." },
+  { id: "t19", s: T(16,0), d: 30, t: "Antipasto and salad prep", who: "Michael + helpers",
+    x: "Cut the cheeses and arrange charcuterie, cheeses, olives, artichokes, grapes, crackers on platters. Put the salad ingredients in the bowl (dressing separate). Put the pasta water on (8 qt pot B)." },
+  { id: "t20", s: T(16,15), d: 15, t: "Stuffing into the bottom oven; cook macaroni", who: "Michael",
+    x: "Once the turkey is out: set the BOTTOM oven to 325F. Two 9x13 pans side by side on the lower rack, the 8x8 on the upper rack, covered. Cook the macaroni, drain, toss with oil, leave covered." },
+  { id: "t20b", s: T(16,30), d: 20, bg: true, t: "Stuffing baking, covered", who: "",
+    x: "Uncover at 4:50 for the last 15 minutes. The deep pan may need 10-15 minutes longer." },
+  { id: "t21", s: T(16,30), d: 10, t: "Caprese and antipasto out", who: "Michael",
+    x: "Assemble the caprese (mozzarella, tomato, basil, olive oil, salt). Put the antipasto out. Check the potatoes are still above 140F." },
+  { id: "t22", s: T(16,40), d: 15, t: "Glaze the hams", who: "Leo + an adult",
+    x: "Uncover the hams, brush on the extra glaze, set the TOP oven to 425F, bake 15 more minutes until 140F." },
+  { id: "t23", s: T(16,45), d: 10, t: "Soup back to a boil", who: "Michael",
+    x: "Bring the soup to a boil, then simmer gently to 165F. Stir occasionally." },
+  { id: "t23b", s: T(16,55), d: 30, bg: true, t: "Soup simmering", who: "",
+    x: "Keep at a gentle simmer until dinner." },
+  { id: "t24", s: T(16,50), d: 10, t: "Carve turkey; boil the green beans", who: "Michael + Dominic",
+    x: "Check the turkey is above 140F, carve, moisten with hot gravy, hold covered. Boil the beans 4-5 min in 8 qt pot B, drain, toss with olive oil and butter. Uncover the stuffing pans." },
+  { id: "t25", s: T(16,55), d: 10, t: "Hams out; cornbread in; stuffing out", who: "Michael + Leo",
+    x: "Hams out at 140F, tent to rest 10-15 min. Cornbread muffins (in foil) into the bottom oven for 5-10 min. Stuffing out when golden (about 5:05)." },
+  { id: "t25b", s: T(17,5), d: 10, t: "Put the cold dishes on the table", who: "Everyone",
+    x: "Cranberry sauce (sliced in a bowl), kimchi, Ana's bread and butter, the Pecorino bowl, crackers and chips, and serving spoons. The antipasto and caprese are already out." },
+  { id: "t26a", s: T(17,10), d: 10, t: "Put the hot sides on the table", who: "Everyone",
+    x: "Mashed potatoes (out of the cooler; stir in warm milk), stuffing (out of the oven when golden), green beans, and the cornbread muffins (warmed in foil). Set hot dishes on trivets." },
+  { id: "t26b", s: T(17,15), d: 10, t: "Put the mains on the table", who: "Michael + Leo",
+    x: "Slice the hams onto a platter. Carved turkey on a platter with hot gravy. Reheat the gravy in the microwave and put it in a pitcher on the table." },
+  { id: "t26c", s: T(17,20), d: 10, t: "Soup, pasta, and salad on the table", who: "Everyone",
+    x: "Ladle the soup into bowls (or bring the pot to the table), with the pasta in a bowl next to it. Toss the salad with the dressing and put it out. Fill water glasses and call everyone to the table." },
+  { id: "t27", s: T(17,30), d: 60, t: "DINNER!", who: "Everyone",
+    x: "Serve the soup first, then the main course. Enjoy." },
+  { id: "t28a", s: T(18,15), d: 15, t: "Preheat the bottom oven to 400F", who: "Michael",
+    x: "For the chestnuts." },
+  { id: "t28b", s: T(18,30), d: 30, t: "Clear the table; put leftovers away", who: "Everyone",
+    x: "Refrigerate leftovers within 2 hours of cooking (by about 7:15 PM at the latest). Stack the plates." },
+  { id: "t28c", s: T(18,30), d: 5, t: "Chestnuts into the oven", who: "Dominic + an adult",
+    x: "Put the scored chestnuts on a sheet in the bottom oven at 400F for 20-25 minutes." },
+  { id: "t28d", s: T(18,35), d: 20, bg: true, t: "Chestnuts roasting", who: "",
+    x: "Until the shells curl, about 6:55 PM." },
+  { id: "t28e", s: T(18,55), d: 5, t: "Chestnuts out; wrap in a towel", who: "Dominic + an adult",
+    x: "Wrap in a towel for 5 minutes, then peel while warm." },
+  { id: "t29", s: T(19,0), d: 40, t: "DESSERT", who: "Everyone",
+    x: "Serve the apple pie and the peeled chestnuts, plus any desserts guests brought. Coffee or tea." }
+];
+TASKS.forEach(t => { t.e = t.s + t.d; });
+
+// oven segments: s,e minutes; what's in the oven
+const OVEN_BOTTOM = [
+  { s: W(19,0), e: W(20,30), temp: "300F", state: "Baking", what: "Bread cubes toasting (batches on baking sheets)" },
+  { s: T(9,15), e: T(9,30), temp: "375F", state: "Preheating", what: "Empty, preheating for the cornbread" },
+  { s: T(9,30), e: T(9,48), temp: "375F", state: "Baking", what: "2 muffin tins of cornbread (18 min)" },
+  { s: T(14,15), e: T(14,30), temp: "425F", state: "Preheating", what: "Empty, preheating for the turkey" },
+  { s: T(14,30), e: T(16,0), temp: "425F", state: "Roasting", what: "2 turkey breasts on the rack. Pull at 158F" },
+  { s: T(16,0), e: T(16,15), temp: "325F", state: "Adjusting", what: "Cooling to 325F. Open the door a few minutes" },
+  { s: T(16,15), e: T(16,55), temp: "325F", state: "Baking", what: "3 stuffing pans (two 9x13 lower rack, 8x8 upper). Covered until 4:50" },
+  { s: T(16,55), e: T(17,5), temp: "325F", state: "Baking", what: "Stuffing (uncovered) + cornbread muffins warming" },
+  { s: T(18,15), e: T(18,30), temp: "400F", state: "Preheating", what: "Empty, preheating for the chestnuts" },
+  { s: T(18,30), e: T(18,55), temp: "400F", state: "Roasting", what: "Chestnuts on a sheet (20-25 min)" }
+];
+const OVEN_TOP = [
+  { s: T(13,30), e: T(15,35), temp: "200F", state: "Holding", what: "Mashed potatoes in 2 covered dishes (Pyrex)" },
+  { s: T(15,35), e: T(15,50), temp: "325F", state: "Preheating", what: "Empty, heating for the hams" },
+  { s: T(15,50), e: T(16,40), temp: "325F", state: "Baking", what: "3 hams in 1/8 inch of water, covered with foil" },
+  { s: T(16,40), e: T(16,55), temp: "425F", state: "Glazing", what: "3 hams, uncovered, with extra glaze. Pull at 140F" }
+];
+// slot: BL/BM/BR = the 3 small back burners, FL/FR = the 2 large front burners
+const BURNERS = [
+  { s: T(12,50), e: T(13,15), slot: "FR", pot: "10 qt pot", short: "Potatoes", what: "Boiling the mashing potatoes" },
+  { s: T(13,45), e: T(15,10), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: sauté, then simmer" },
+  { s: T(14,45), e: T(15,0), slot: "BM", pot: "Large saucepan", short: "Stuffing", what: "Stuffing: celery and onion in butter" },
+  { s: T(15,45), e: T(16,5), slot: "BL", pot: "8 qt pot A", short: "Gravy", what: "Gravy" },
+  { s: T(16,0), e: T(16,30), slot: "FR", pot: "8 qt pot B", short: "Pasta", what: "Pasta water, then macaroni" },
+  { s: T(16,45), e: T(17,25), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: back to a boil, then simmer" },
+  { s: T(16,50), e: T(17,0), slot: "FR", pot: "8 qt pot B", short: "Green beans", what: "Green beans (4-5 min boil)" }
+];
+// Prepared items: [from, location] in order. cat is the chip color
+const ITEMS = [
+  { n: "Dry-brined turkey (2 breasts)", track: [[W(18,20), "Fridge, uncovered on a rack"], [T(13,45), "Counter, tempering"], [T(14,40), "Bottom oven"], [T(16,0), "Counter, resting under foil"], [T(16,50), "Carved, held hot with gravy"], [T(17,15), "Sliced, on the table"]] },
+  { n: "Hams (3)", track: [[W(17,0), "Fridge"], [T(15,5), "Counter, tempering"], [T(15,55), "Top oven"], [T(16,55), "Resting under foil"], [T(17,15), "Sliced, on the table"]] },
+  { n: "Gravy", track: [[T(16,0), "Pitcher on the counter"], [T(17,10), "Reheated in the microwave"], [T(17,15), "On the table"]] },
+  { n: "Stuffing (3 pans)", track: [[T(15,25), "Counter, covered in foil"], [T(16,20), "Bottom oven"], [T(17,10), "On the table"]] },
+  { n: "Mashed potatoes (2 dishes)", track: [[T(13,30), "Top oven (200F), covered"], [T(15,35), "Cooler, wrapped in towels"], [T(17,10), "On the table"]] },
+  { n: "Green beans", track: [[T(17,0), "Pot, covered, hot"], [T(17,10), "On the table"]] },
+  { n: "Cornbread muffins (24)", track: [[T(9,48), "Counter, covered in foil"], [T(16,55), "Bottom oven, warming"], [T(17,10), "On the table"]] },
+  { n: "Cranberry sauce", track: [[W(17,0), "Fridge, in the can"], [T(16,15), "Opened, sliced in a bowl"], [T(17,5), "On the table"]] },
+  { n: "Kimchi (Halmoni)", track: [[T(15,45), "With Halmoni"], [T(17,5), "On the table"]] },
+  { n: "Italian bread (Ana)", track: [[T(16,0), "With Ana"], [T(17,5), "On the table"]] },
+  { n: "Pecorino bowl and butter", track: [[T(16,0), "Counter"], [T(17,5), "On the table"]] },
+  { n: "Antipasto and caprese", track: [[T(16,0), "Counter, covered"], [T(16,30), "Platters on the table"]] },
+  { n: "Salad (undressed)", track: [[T(16,15), "Bowl, in the fridge"], [T(17,20), "Tossed, on the table"]] },
+  { n: "Macaroni (cooked)", track: [[T(16,30), "Counter, covered, with oil"], [T(17,20), "On the table"]] },
+  { n: "Soup (16 qt pot)", track: [[T(15,10), "Stove, covered, heat off"], [T(16,45), "Stove, reheating"], [T(17,20), "In bowls on the table"]] },
+  { n: "Chestnuts", track: [[T(9,20), "Counter, scored"], [T(18,30), "Bottom oven"], [T(19,0), "Peeled, on the table"]] },
+  { n: "Apple pie", track: [[W(17,0), "Fridge"], [T(18,55), "Counter, ready to cut"], [T(19,0), "On the table"]] },
+  { n: "Toasted bread cubes (27 cups)", end: T(15,30), track: [[W(20,30), "Counter, in bags"], [T(14,45), "In the stuffing mix"]] },
+  { n: "Salad dressing", end: T(17,25), track: [[T(9,20), "Counter, in a jar"], [T(17,20), "Tossed on the salad"]] },
+  { n: "Ham glaze", end: T(17,0), track: [[T(9,20), "Counter, in a bowl"], [T(16,40), "On the hams"]] },
+  { n: "Chopped celery and onion", end: T(15,0), track: [[T(11,0), "Counter, covered"], [T(14,45), "In the stuffing"]] },
+  { n: "Peeled potatoes for mashing", end: T(13,15), track: [[T(12,40), "Counter, in cold water"], [T(12,50), "Boiling on the stove"]] },
+  { n: "Chopped soup vegetables", end: T(15,0), track: [[T(12,40), "Counter, potatoes in water"], [T(13,50), "In the soup pot"]] }
+];
+
+// ===================== CORE LOGIC =====================
+const pad = n => String(n).padStart(2, "0");
+function clockStr(min, secs) {
+  const m = ((min % 1440) + 1440) % 1440;
+  const h = Math.floor(m / 60), mm = Math.floor(m % 60), ss = Math.floor((m * 60) % 60);
+  const ap = h >= 12 ? "PM" : "AM", h12 = (h % 12) || 12;
+  return h12 + ":" + pad(mm) + (secs ? ":" + pad(ss) : "") + " " + ap;
+}
+function dayStr(min) { return min >= 1440 ? "Thursday" : "Wednesday"; }
+function durStr(min) {
+  const total = Math.max(0, Math.round(min * 60));
+  const h = Math.floor(total / 3600), m = Math.floor((total % 3600) / 60), s = total % 60;
+  return h > 0 ? h + ":" + pad(m) + ":" + pad(s) : pad(m) + ":" + pad(s);
+}
+function fixedDur(min) {   // hours only when needed
+  const total = Math.max(0, Math.round(min * 60));
+  const h = Math.min(99, Math.floor(total / 3600)), m = Math.floor((total % 3600) / 60), sec = total % 60;
+  return h > 0 ? h + ":" + pad(m) + ":" + pad(sec) : m + ":" + pad(sec);   // no leading zeros; the monospace font and left alignment keep it steady
+}
+function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function longDur(min) {
+  const total = Math.max(0, Math.round(min * 60));
+  const d = Math.floor(total / 86400), h = Math.floor((total % 86400) / 3600), m = Math.floor((total % 3600) / 60), sec = total % 60;
+  return (d > 0 ? d + "d " : "") + (d > 0 || h > 0 ? h + ":" + pad(m) + ":" + pad(sec) : pad(m) + ":" + pad(sec));
+}
+const PLAN_BASE = new Date(2026, 10, 25, 0, 0, 0).getTime();   // Wed Nov 25 2026, 12:00 AM local
+function realNowMin(d) {
+  const t = ((d ? d.getTime() : Date.now()) - PLAN_BASE) / 60000;
+  if (t < RANGE_START) return { min: RANGE_START, state: "before", diff: RANGE_START - t };
+  if (t > RANGE_END) return { min: RANGE_END, state: "after", diff: t - RANGE_END };
+  return { min: t, state: "inside", diff: 0 };
+}
+function segAt(list, sim) { return list.find(g => g.s <= sim && sim < g.e) || null; }
+function segNext(list, sim) { return list.filter(g => g.s > sim).sort((a, b) => a.s - b.s)[0] || null; }
+function locAt(item, sim) {
+  let cur = null;
+  for (const [t, loc] of item.track) if (t <= sim) cur = loc;
+  return cur;
+}
+function locCat(loc) {
+  const l = loc.toLowerCase();
+  if (l.startsWith("fridge") || l.includes("in the fridge")) return "fridge";
+  if (l.includes("oven")) return "oven";
+  if (l.includes("cooler")) return "cooler";
+  if (l.includes("stove") || l.includes("boiling") || l.includes("pot")) return "stove";
+  if (l.includes("table") || l.includes("platter") || l.includes("bowls")) return "table";
+  return "counter";
+}
+function snapshot(sim, done) {
+  const notDone = t => !done.has(t.id);
+  const active = TASKS.filter(t => t.s <= sim && sim < t.e && notDone(t));
+  const hands = active.filter(t => !t.bg);
+  const pool = hands.length ? hands : active;
+  const byEnd = (a, b) => a.e - b.e || a.s - b.s;
+  const primary = pool.slice().sort(byEnd)[0] || null;
+  const also = active.filter(t => t !== primary).sort(byEnd);
+  const late = TASKS.filter(t => notDone(t) && !t.bg && t.e <= sim && t.e > sim - 45).sort((a, b) => a.e - b.e);
+  const upcoming = TASKS.filter(t => t.s > sim && notDone(t) && !t.bg).sort((a, b) => a.s - b.s);
+  const skipped = TASKS.filter(t => notDone(t) && !t.bg && t.e <= sim - 45).length;
+  return {
+    primary, also, late, upcoming, skipped,
+    ovenTop: { now: segAt(OVEN_TOP, sim), next: segNext(OVEN_TOP, sim) },
+    ovenBottom: { now: segAt(OVEN_BOTTOM, sim), next: segNext(OVEN_BOTTOM, sim) },
+    burners: BURNERS.filter(b => b.s <= sim && sim < b.e),
+    prepared: ITEMS.filter(i => !(i.end && sim >= i.end)).map(i => ({ n: i.n, loc: locAt(i, sim) })).filter(x => x.loc)
+  };
+}
+const STARTS = Array.from(new Set(TASKS.filter(t => !t.bg).map(t => t.s))).sort((a, b) => a - b);
+function nextStart(sim) { return STARTS.find(s => s > sim + 0.01); }
+function prevStart(sim) { const p = STARTS.filter(s => s < sim - 0.01); return p.length ? p[p.length - 1] : undefined; }
+
+// ===================== BROWSER UI =====================
+if (typeof document !== "undefined") {
+  const $ = id => document.getElementById(id);
+  let order = [];   // ids marked done, in the order you marked them
+  try { order = JSON.parse(localStorage.getItem("tg26_done") || "[]"); } catch (e) {}
+  let done = new Set(order);
+  const saveDone = () => { done = new Set(order); try { localStorage.setItem("tg26_done", JSON.stringify(order)); } catch (e) {} };
+
+  const r0 = realNowMin();
+  const st = { sim: r0.min, mode: "live", playing: false, speed: 60, state: r0.state, diff: r0.diff, last: performance.now() };
+
+  document.title = APP_NAME + " - Thanksgiving 2026";
+  $("appName").textContent = APP_NAME;
+  const slider = $("slider");
+  slider.min = RANGE_START; slider.max = RANGE_END; slider.step = 1;
+
+  function buildTicks() {
+    $("ticks").innerHTML = STARTS.map(s => {
+      const left = ((s - RANGE_START) / (RANGE_END - RANGE_START)) * 100;
+      return '<i style="left:' + left + '%"></i>';
+    }).join("");
+  }
+  buildTicks();
+
+  function setSim(min, keepMode) {
+    st.sim = clamp(min, RANGE_START, RANGE_END);
+    if (!keepMode) { st.mode = "manual"; st.playing = false; }
+    render();
+  }
+  function goNow() { const r = realNowMin(); st.mode = "live"; st.playing = false; st.state = r.state; st.diff = r.diff; st.sim = r.min; render(); }
+  function step(dir) {
+    const t = dir > 0 ? nextStart(st.sim) : prevStart(st.sim);
+    if (t !== undefined) setSim(t);
+  }
+  function currentTarget() {
+    const snap = snapshot(st.sim, done);
+    return snap.primary || snap.upcoming[0] || null;
+  }
+  function toggleDone() {
+    const t = currentTarget();
+    if (!t) return;
+    if (done.has(t.id)) order = order.filter(i => i !== t.id); else order.push(t.id);
+    saveDone(); render();
+  }
+  function undoDone() { if (!order.length) return; order.pop(); saveDone(); render(); refreshModal(); }
+  function unmark(id) { order = order.filter(i => i !== id); saveDone(); render(); refreshModal(); }
+  function unmarkAll() { order = []; saveDone(); render(); refreshModal(); }
+
+  // popups: keyboard help and the done list (where you can unmark steps)
+  let modalMode = null;
+  function openModal(mode) { modalMode = mode; $("modal").hidden = false; refreshModal(); }
+  function closeModal() { modalMode = null; $("modal").hidden = true; }
+  function refreshModal() {
+    if (!modalMode) return;
+    if (modalMode === "help") {
+      $("modalTitle").textContent = "Keyboard shortcuts";
+      $("modalBody").innerHTML = "<table>" + [
+        ["\u2190 / \u2192", "Previous / next step"], ["\u2191 / \u2193", "Move time 5 minutes (Shift: 30 minutes)"],
+        ["D", "Mark the current step done"], ["U", "Undo the last done"], ["L", "Open the done list (unmark any step)"],
+        ["N", "Snap to the real time (live)"], ["Space", "Play / pause the simulation"], ["F", "Full screen"], ["?", "This help"], ["Esc", "Close a popup"]
+      ].map(r => '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td></tr>").join("") + "</table>";
+      $("modalActions").innerHTML = '<button id="mClose">Close</button>';
+    } else {
+      $("modalTitle").textContent = "Steps marked done (" + order.length + ")";
+      const rows = order.slice().reverse().map(id => TASKS.find(t => t.id === id)).filter(Boolean).map(t =>
+        '<tr><td>' + t.t + '</td><td class="k">' + clockStr(t.s) + '</td><td><button data-unmark="' + t.id + '">Unmark</button></td></tr>').join("");
+      $("modalBody").innerHTML = rows ? "<table>" + rows + "</table>" : "<div class='empty'>Nothing is marked done.</div>";
+      $("modalActions").innerHTML = (order.length ? '<button id="mAll">Unmark all</button>' : "") + '<button id="mClose">Close</button>';
+    }
+  }
+  $("modal").addEventListener("click", e => {
+    if (e.target.id === "modal" || e.target.id === "mClose") closeModal();
+    else if (e.target.id === "mAll") unmarkAll();
+    else if (e.target.dataset && e.target.dataset.unmark) unmark(e.target.dataset.unmark);
+  });
+  $("undoBtn").onclick = undoDone;
+  $("doneListBtn").onclick = () => openModal("done");
+  $("helpBtn").onclick = () => openModal("help");
+
+  function rowHTML(t, sim, late) {
+    const r = late ? "late " + durStr(sim - t.e) : durStr(t.e - sim);
+    return '<div class="row' + (late ? " late" : "") + '"><span class="t">' + t.t + '</span><span class="r">' + r + "</span></div>";
+  }
+  function ovenHTML(name, o, sim) {
+    if (o.now) {
+      const left = o.now.e - sim;
+      return '<div class="top"><span class="name">' + name + '</span><span class="temp">' + o.now.temp + '</span></div>' +
+        '<div class="what">' + o.now.what + '</div>' +
+        '<div class="state">' + o.now.state + " &middot; changes in " + durStr(left) + '</div>';
+    }
+    const nx = o.next;
+    return '<div class="top"><span class="name">' + name + '</span><span class="temp">OFF</span></div>' +
+      '<div class="what" style="color:var(--mute)">Empty</div>' +
+      '<div class="state">' + (nx ? "Next: " + nx.what + " at " + clockStr(nx.s) : "Nothing more planned") + "</div>";
+  }
+
+  const fitKeys = {};
+  function fitCards() {
+    ["alsoCard", "ovenBottom", "ovenTop", "burnCard", "prepCard", "nextCard", "upCard"].forEach(id => {
+      const card = $(id), inner = card.querySelector(".inner");
+      if (!inner) return;
+      const sig = inner.children.length + "|" + inner.querySelectorAll(".row,.item,.bc,.brow,.what").length + "|" +
+        inner.textContent.replace(/[0-9:]/g, "").length + "|" + innerWidth + "x" + innerHeight;
+      if (fitKeys[id] === sig) return;
+      fitKeys[id] = sig;
+      const tryFit = () => {
+        let z = 1;
+        inner.style.zoom = 1;
+        while (z > 0.35 && card.scrollHeight > card.clientHeight + 1) { z -= 0.04; inner.style.zoom = z.toFixed(2); }
+        return z;
+      };
+      const list = id === "prepCard" ? $("prepList") : null;
+      if (list) list.classList.remove("two");
+      let z = tryFit();
+      if (list && z < 0.72) { list.classList.add("two"); z = tryFit(); }
+    });
+  }
+  let lastFitKey = "";
+  function fitNow() {
+    const root = document.documentElement, card = $("nowCard"), det = $("nowDetail");
+    let f = 1;
+    root.style.setProperty("--fit", f);
+    for (let i = 0; i < 24 && f > 0.4; i++) {
+      if (det.scrollHeight <= det.clientHeight + 1 && card.scrollHeight <= card.clientHeight + 1) break;
+      f -= 0.04;
+      root.style.setProperty("--fit", f.toFixed(2));
+    }
+  }
+  window.addEventListener("resize", () => { lastFitKey = ""; Object.keys(fitKeys).forEach(k => delete fitKeys[k]); render(); });
+
+  function render() {
+    const sim = st.sim;
+    const snap = snapshot(sim, done);
+
+    $("clock").textContent = clockStr(sim, true);
+    $("dayText").textContent = dayStr(sim) + ", Nov " + (sim >= 1440 ? 26 : 25);
+    const badge = $("modeBadge");
+    if (st.mode === "live") { badge.className = "live"; badge.id = "modeBadge"; badge.textContent = "LIVE"; }
+    else { badge.className = "sim"; badge.id = "modeBadge"; badge.textContent = st.playing ? "SIM " + st.speed + "x" : "SIM (paused)"; }
+    const live = st.mode === "live";
+    const sh = (live && st.state === "before") ? st.diff : 0;   // extra time until the plan starts
+    $("liveNote").textContent = !live ? "" :
+      st.state === "before" ? "Plan starts in " + longDur(st.diff) + " (clock held at the start)" :
+      st.state === "after" ? "Finished " + longDur(st.diff) + " ago (clock held at the end)" : "";
+    $("playBtn").textContent = st.playing ? "Pause" : "Play";
+    slider.value = Math.round(sim);
+    $("daySel").value = sim >= 1440 ? "1440" : "0";
+    const m = ((sim % 1440) + 1440) % 1440;
+    if (document.activeElement !== $("timeIn")) $("timeIn").value = pad(Math.floor(m / 60)) + ":" + pad(Math.floor(m % 60));
+
+    // tick marks colored by done
+    const marks = $("ticks").children;
+    STARTS.forEach((s, i) => {
+      const ids = TASKS.filter(t => !t.bg && t.s === s);
+      if (marks[i]) marks[i].className = ids.every(t => done.has(t.id)) ? "done" : "";
+    });
+
+    // NOW card
+    const p = snap.primary;
+    if (p) {
+      $("nowLabel").textContent = p.bg ? "Now (just waiting)" : "Doing now";
+      $("nowTitle").textContent = p.t;
+      $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e);
+      $("nowDetail").textContent = p.x;
+      const left = p.e - sim, frac = clamp((sim - p.s) / (p.e - p.s), 0, 1);
+      $("timer").textContent = fixedDur(left);
+      $("timer").className = "";
+      $("timerLabel").textContent = "time left on this step";
+      $("barFill").style.width = (frac * 100) + "%";
+      $("doneBtn").textContent = "Mark done (D)";
+      $("doneBtn").disabled = false;
+    } else {
+      const nx = snap.upcoming[0];
+      $("nowLabel").textContent = "Doing now";
+      $("nowTitle").textContent = nx ? "Nothing right now" : "All done. Enjoy!";
+      $("nowMeta").textContent = nx ? "Next at " + clockStr(nx.s) : "";
+      $("nowDetail").textContent = nx ? "You are caught up. The next step is below." : "Every step is finished.";
+      $("timer").textContent = nx ? fixedDur(nx.s - sim + sh) : "0:00";
+      $("timer").className = "";
+      $("timerLabel").textContent = nx ? "until the next step starts" : "";
+      $("barFill").style.width = "0%";
+      $("doneBtn").textContent = nx ? "Mark next step done (D)" : "Mark done (D)";
+      $("doneBtn").disabled = !nx;
+    }
+
+    // also / late
+    let also = "";
+    const showLate = st.mode === "live";   // in simulation, steps you skipped past are not flagged
+    if (showLate) snap.late.forEach(t => { also += rowHTML(t, sim, true); });
+    snap.also.forEach(t => { also += rowHTML(t, sim, false); });
+    if (showLate && snap.skipped) also += '<div class="empty">' + snap.skipped + " earlier step(s) not marked done</div>";
+    $("alsoList").innerHTML = also || '<div class="empty">Nothing else running</div>';
+
+    // fit the Doing Now content inside its box
+    const fitKey = $("nowTitle").textContent + "|" + $("nowDetail").textContent.length + "|" + innerWidth + "x" + innerHeight;
+    if (fitKey !== lastFitKey) { lastFitKey = fitKey; fitNow(); }
+
+    // ovens
+    $("ovenBottom").className = "card oven " + (snap.ovenBottom.now ? "on" : "off");
+    $("ovenTop").className = "card oven " + (snap.ovenTop.now ? "on" : "off");
+    $("ovenBottomIn").innerHTML = ovenHTML("Bottom oven", snap.ovenBottom, sim);
+    $("ovenTopIn").innerHTML = ovenHTML("Top oven", snap.ovenTop, sim);
+
+    // burners: numbered like the stove (1-3 small in back, 4-5 large in front)
+    const NUM = { BL: 1, BM: 2, BR: 3, FL: 4, FR: 5 };
+    const COL = { 1: "#ff6b6b", 2: "#ffb020", 3: "#3ecf8e", 4: "#5aa9ff", 5: "#c084fc" };
+    const bySlot = {};
+    snap.burners.forEach(bn => { bySlot[bn.slot] = bn; });
+    const circ = (slot, size) => {
+      const n = NUM[slot], on = !!bySlot[slot];
+      return '<div class="bc ' + size + (on ? " on" : "") + '"' + (on ? ' style="background:' + COL[n] + '"' : "") + ">" + n + "</div>";
+    };
+    const list = snap.burners.slice().sort((x, y) => NUM[x.slot] - NUM[y.slot]).map(bn => {
+      const n = NUM[bn.slot];
+      return '<div class="brow"><i style="background:' + COL[n] + '">' + n + '</i><span class="what"><b>' + bn.short + "</b> <small>" + bn.pot + '</small></span><span class="tm">' + durStr(bn.e - sim) + "</span></div>";
+    }).join("");
+    $("burnIn").innerHTML = "<h3>Burners (" + snap.burners.length + " of 5 on)</h3>" +
+      '<div class="burnwrap"><div class="stove"><div class="rowb">' + circ("BL", "small") + circ("BM", "small") + circ("BR", "small") + "</div>" +
+      '<div class="rowb">' + circ("FL", "large") + circ("FR", "large") + '</div></div><div class="blist">' +
+      (list || '<div class="empty">All burners off</div>') + "</div></div>";
+
+    // prepared
+    $("prepList").innerHTML = snap.prepared.length ?
+      snap.prepared.map(i => '<div class="item"><span>' + i.n + '</span><span class="chip ' + locCat(i.loc) + '">' + i.loc + "</span></div>").join("") :
+      '<div class="empty">Nothing prepared yet</div>';
+
+    // next
+    const nx = snap.upcoming[0];
+    if (nx) {
+      $("nextTitle").textContent = nx.t;
+      $("nextWhen").textContent = "starts at " + clockStr(nx.s) + " (in " + longDur(nx.s - sim + sh) + ")" + (nx.who ? " · " + nx.who : "");
+    } else { $("nextTitle").textContent = "Nothing left"; $("nextWhen").textContent = ""; }
+    $("upcoming").innerHTML = snap.upcoming.slice(1, 4).map(t =>
+      '<div class="row"><span class="t">' + clockStr(t.s) + " &nbsp; " + t.t + '</span><span class="r">in ' + longDur(t.s - sim + sh) + "</span></div>").join("") || '<div class="empty">-</div>';
+
+    // make every box fit (shrink its content if needed); runs last, after all content is updated
+    fitCards();
+  }
+
+  // time advance
+  function tick() {
+    const now = performance.now(), dt = (now - st.last) / 60000;
+    st.last = now;
+    if (st.mode === "live") { const r = realNowMin(); st.sim = r.min; st.state = r.state; st.diff = r.diff; }
+    else if (st.playing) { st.sim = clamp(st.sim + dt * st.speed, RANGE_START, RANGE_END); if (st.sim >= RANGE_END) st.playing = false; }
+    render();
+  }
+  setInterval(tick, 250);
+
+  // controls
+  slider.addEventListener("input", () => { setSim(+slider.value); slider.blur(); });
+  $("nowBtn").onclick = goNow;
+  $("prevBtn").onclick = () => step(-1);
+  $("nextBtn").onclick = () => step(1);
+  $("doneBtn").onclick = toggleDone;
+  $("playBtn").onclick = () => { if (st.mode === "live") st.mode = "manual"; st.playing = !st.playing; st.last = performance.now(); render(); };
+  $("speedSel").onchange = e => { st.speed = +e.target.value; $("speedSel").blur(); render(); };
+  $("fsBtn").onclick = toggleFS;
+  const setFromInputs = () => {
+    const [h, m] = ($("timeIn").value || "00:00").split(":").map(Number);
+    setSim(+$("daySel").value + h * 60 + m);
+  };
+  $("daySel").onchange = () => { setFromInputs(); $("daySel").blur(); };
+  $("timeIn").onchange = () => { setFromInputs(); $("timeIn").blur(); };
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+    else document.exitFullscreen && document.exitFullscreen();
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.target && (e.target.id === "timeIn")) return;
+    const k = e.key;
+    if (modalMode) { if (k === "Escape" || k === "?") { e.preventDefault(); closeModal(); } return; }
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    if (k === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (k === "ArrowLeft") { e.preventDefault(); step(-1); }
+    else if (k === "ArrowUp") { e.preventDefault(); setSim(st.sim + (e.shiftKey ? 30 : 5)); }
+    else if (k === "ArrowDown") { e.preventDefault(); setSim(st.sim - (e.shiftKey ? 30 : 5)); }
+    else if (k === "d" || k === "D") { e.preventDefault(); toggleDone(); }
+    else if (k === "u" || k === "U") { e.preventDefault(); undoDone(); }
+    else if (k === "l" || k === "L") { e.preventDefault(); openModal("done"); }
+    else if (k === "?") { e.preventDefault(); openModal("help"); }
+    else if (k === "n" || k === "N") { e.preventDefault(); goNow(); }
+    else if (k === "f" || k === "F") { e.preventDefault(); toggleFS(); }
+    else if (k === " ") { e.preventDefault(); $("playBtn").click(); }
+  }, true);
+
+  render();
+}
+
+if (typeof module !== "undefined") module.exports = { TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
+</script>
+</body>
+</html>
