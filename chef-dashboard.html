@@ -64,6 +64,8 @@ main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) mi
 .row .t { color: var(--ink); } .row .r { color: var(--mute); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .row.late .t, .row.late .r { color: var(--bad); }
 .inner { transform-origin: top left; }
+#viewNote { font-size: clamp(11px, min(1vw, 1.6vh), 18px); color: var(--cold); min-height: 1.1em; }
+.viewer #doneBtn, .viewer #undoBtn, .viewer #mDone { display: none; }
 #liveNote { font-size: clamp(11px, min(1.1vw, 1.7vh), 20px); color: var(--accent); margin-top: 0.3vh; min-height: 1.2em; font-variant-numeric: tabular-nums; }
 .empty { color: var(--mute); font-size: clamp(12px, 1.05vw, 19px); }
 
@@ -117,6 +119,9 @@ footer { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 2fr);
 .keys { font-size: clamp(10px, 0.85vw, 15px); color: var(--mute); margin-top: 0.6vh; }
 kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4px; padding: 0 0.4em; font-family: inherit; }
 
+#updateBar { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 20; background: var(--accent); color: #2c1c00; padding: 0.5em 1em; border-radius: 999px; font-weight: 700; font-size: clamp(12px, 1.1vw, 18px); box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+#updateBar[hidden] { display: none; }
+#updateBar button { margin-left: 0.6em; }
 #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 10; }
 #modal[hidden] { display: none; }
 #modal .box { background: var(--panel); border: 1px solid var(--accent); border-radius: 14px; padding: 2vh 2vw; width: min(720px, 92vw); max-height: 86vh; overflow: auto; }
@@ -172,6 +177,7 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
       <div id="clock">--:--</div>
       <div id="day"><span id="dayText"></span><span id="modeBadge" class="live">LIVE</span></div>
       <div id="liveNote"></div>
+      <div id="viewNote"></div>
     </div>
     <div class="controls">
       <select id="daySel" title="Day"><option value="0">Wed</option><option value="1440" selected>Thu</option></select>
@@ -250,6 +256,8 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
   </footer>
 </div>
 
+<div id="updateBar" hidden>A newer version of this page is available. <button id="reloadBtn">Reload</button></div>
+
 <div id="mbar"><button id="mPrev">&larr;</button><button id="mNow" class="primary">Now</button><button id="mDone" class="ok">Done</button><button id="mNext">&rarr;</button></div>
 
 <div id="modal" hidden><div class="box"><h2 id="modalTitle"></h2><div id="modalBody"></div><div class="actions" id="modalActions"></div></div></div>
@@ -270,8 +278,6 @@ const TASKS = [
     x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the wire rack in the roasting pan, UNCOVERED, on one fridge shelf. The same pan and rack are used to roast it. You will not rinse it later." },
   { id: "w3", s: W(19,0), d: 55, t: "Toast the stuffing bread", who: "Michael",
     x: "Toast the country white bread in the toaster (6 slices per round, about 6 minutes with unloading). Cube each batch while the next one toasts. 3 loaves (about 45 slices, 27 cups of cubes) is what the stuffing needs; the 4th loaf is a spare. Bag the cubes and leave them on the counter." },
-  { id: "w4", s: W(20,0), d: 30, t: "Set the table and label dishes", who: "Michael + kids",
-    x: "Set the table and the kids' table. Put out serving dishes and label each one." },
 
   { id: "t1", s: T(9,0), d: 20, t: "Dressing, glaze, and chestnuts", who: "Michael",
     x: "Salad dressing: 3/4 cup olive oil, 1/2 cup lemon juice (about 3 lemons), 1 1/2 tsp salt, 1-2 tsp sugar, pepper, shaken in a jar. Ham glaze: 1 cup brown sugar, 1/4 cup Dijon or honey, 2-3 tbsp water or apple juice. Cut an X in each chestnut. Leave all on the counter. At 9:15 set the BOTTOM oven to 375F for the cornbread." },
@@ -285,6 +291,8 @@ const TASKS = [
     x: "10 qt pot, salted water, boil 15-20 minutes until fork-tender. Burner 1." },
   { id: "t6", s: T(13,15), d: 15, t: "Mash the potatoes and fill 2 dishes", who: "Carmine",
     x: "Drain and dry in the pot 1-2 min. Warm 4 sticks butter + 2-3 cups milk (microwave). Mash, adding gradually. Spread into the 9x13x1.5 and the 8x8x2.5 Pyrex, dot with butter, cover tightly with foil." },
+  { id: "t6b", s: T(13,30), d: 45, t: "Set the tables (after lunch)", who: "Kaia, Issac + kids",
+    x: "Set the table and the kids' table, and put out the serving dishes with labels. This waits until after lunch because guests use the tables before then." },
   { id: "t7", s: T(13,30), d: 5, t: "Potatoes into the TOP oven (200F)", who: "Michael",
     x: "Set the top oven to 200F. Put in both covered dishes to hold hot. Set hot glass on a towel, not a cold surface." },
   { id: "t7b", s: T(13,35), d: 120, bg: true, t: "Potatoes holding hot in the top oven", who: "",
@@ -520,10 +528,42 @@ function prevStart(sim) { const p = STARTS.filter(s => s < sim - 0.01); return p
 // ===================== BROWSER UI =====================
 if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
-  let order = [];   // ids marked done, in the order you marked them
-  try { order = JSON.parse(localStorage.getItem("tg26_done") || "[]"); } catch (e) {}
-  let done = new Set(order);
-  const saveDone = () => { done = new Set(order); try { localStorage.setItem("tg26_done", JSON.stringify(order)); } catch (e) {} };
+  // Progress is an event log keyed by stable step ids (never by position or time), so changing the plan can't corrupt it.
+  // Event: { t: epoch ms, id: step id, type: "done" | "undo", plan: plan minute when it happened }
+  // Owner mode (default): the log lives in this browser. ?view = a read-only follower that loads progress.json.
+  const viewer = new URLSearchParams(location.search).has("view");
+  let events = [], order = [], done = new Set(), info = {}, published = null, lastPlanUpdate = null;
+  const evKey = e => e.t + "|" + e.id + "|" + e.type;
+  function mergeEvents(a, b) { const m = new Map(); a.concat(b).forEach(e => m.set(evKey(e), e)); return [...m.values()].sort((x, y) => x.t - y.t); }
+  function derive() {   // the latest event for each step decides whether it is done
+    const last = {};
+    events.forEach(e => { last[e.id] = e; });
+    info = last;
+    order = Object.values(last).filter(e => e.type === "done").sort((x, y) => x.t - y.t).map(e => e.id);
+    done = new Set(order);
+  }
+  if (!viewer) {
+    try { events = JSON.parse(localStorage.getItem("tg26_events") || "[]"); } catch (e) {}
+    try {   // migrate the older done list, if there is one
+      const old = JSON.parse(localStorage.getItem("tg26_done") || "[]");
+      if (!events.length && old.length) { const t0 = Date.now() - old.length * 1000; events = old.map((id, i) => ({ t: t0 + i, id, type: "done", plan: null })); }
+    } catch (e) {}
+  } else { document.body.classList.add("viewer"); }
+  // one-time: steps that were finished before the dashboard tracked them (applied once, so unmarking sticks)
+  const SEED_DONE = ["w1", "w2"];
+  if (!viewer) {
+    try {
+      const seeded = JSON.parse(localStorage.getItem("tg26_seeded") || "[]");
+      const fresh = SEED_DONE.filter(id => !seeded.includes(id));
+      if (fresh.length) {
+        fresh.forEach(id => { if (!events.some(e => e.id === id)) events.push({ t: Date.now(), id: id, type: "done", plan: null }); });
+        localStorage.setItem("tg26_seeded", JSON.stringify(seeded.concat(fresh)));
+        localStorage.setItem("tg26_events", JSON.stringify(events));
+      }
+    } catch (e) {}
+  }
+  derive();
+  const saveDone = () => { derive(); if (!viewer) { try { localStorage.setItem("tg26_events", JSON.stringify(events)); } catch (e) {} } };
 
   const r0 = realNowMin();
   const st = { sim: r0.min, mode: "live", playing: false, speed: 60, state: r0.state, diff: r0.diff, last: performance.now() };
@@ -571,15 +611,41 @@ if (typeof document !== "undefined") {
     const snap = snapshot(st.sim, done);
     return snap.primary || snap.upcoming[0] || null;
   }
+  function logEvent(id, type) {
+    if (viewer) return;
+    events.push({ t: Date.now(), id: id, type: type, plan: Math.round(st.sim) });
+    saveDone(); render(); refreshModal();
+  }
   function toggleDone() {
     const t = currentTarget();
-    if (!t) return;
-    if (done.has(t.id)) order = order.filter(i => i !== t.id); else order.push(t.id);
-    saveDone(); render();
+    if (!t || viewer) return;
+    logEvent(t.id, done.has(t.id) ? "undo" : "done");
   }
-  function undoDone() { if (!order.length) return; order.pop(); saveDone(); render(); refreshModal(); }
-  function unmark(id) { order = order.filter(i => i !== id); saveDone(); render(); refreshModal(); }
-  function unmarkAll() { order = []; saveDone(); render(); refreshModal(); }
+  function undoDone() { if (viewer || !order.length) return; logEvent(order[order.length - 1], "undo"); }
+  function unmark(id) { logEvent(id, "undo"); }
+  function unmarkAll() { if (viewer) return; order.slice().forEach(id => events.push({ t: Date.now(), id: id, type: "undo", plan: Math.round(st.sim) })); saveDone(); render(); refreshModal(); }
+
+  // publishing: you download progress.json and commit it to the repo yourself; followers open the page with ?view
+  function publishProgress() {
+    const data = { updated: new Date().toISOString(), by: "Michael", events: events };
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
+    a.download = "progress.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    flash("Saved progress.json. Put it in the repo folder, commit it, and push to publish.");
+  }
+  function loadPublished(quiet) {
+    return fetch("progress.json?" + Date.now(), { cache: "no-store" })
+      .then(r => { if (!r.ok) throw new Error("none"); return r.json(); })
+      .then(d => {
+        published = { updated: d.updated };
+        events = viewer ? (d.events || []) : mergeEvents(events, d.events || []);
+        saveDone(); render(); refreshModal();
+        if (!quiet) flash("Loaded the published progress (" + (d.events || []).length + " events).");
+      })
+      .catch(() => { if (!quiet) flash("No published progress.json found yet."); });
+  }
+  function flash(msg) { const n = $("modalNote"); if (n) n.textContent = msg; }
 
   // popups: keyboard help and the done list (where you can unmark steps)
   let modalMode = null;
@@ -596,16 +662,21 @@ if (typeof document !== "undefined") {
       ].map(r => '<tr><td class="k">' + r[0] + "</td><td>" + r[1] + "</td></tr>").join("") + "</table>";
       $("modalActions").innerHTML = '<button id="mClose">Close</button>';
     } else {
-      $("modalTitle").textContent = "Steps marked done (" + order.length + ")";
+      $("modalTitle").textContent = (viewer ? "Shared progress" : "Steps marked done") + " (" + order.length + " of " + TASKS.filter(t => !t.bg).length + ")";
+      const when = ms => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
       const rows = order.slice().reverse().map(id => TASKS.find(t => t.id === id)).filter(Boolean).map(t =>
-        '<tr><td>' + t.t + '</td><td class="k">' + clockStr(t.s) + '</td><td><button data-unmark="' + t.id + '">Unmark</button></td></tr>').join("");
-      $("modalBody").innerHTML = rows ? "<table>" + rows + "</table>" : "<div class='empty'>Nothing is marked done.</div>";
-      $("modalActions").innerHTML = (order.length ? '<button id="mAll">Unmark all</button>' : "") + '<button id="mClose">Close</button>';
+        '<tr><td>' + t.t + '</td><td class="k">done ' + when(info[t.id].t) + '</td><td class="k">plan ' + clockStr(t.s) + '</td>' +
+        (viewer ? "" : '<td><button data-unmark="' + t.id + '">Unmark</button></td>') + '</tr>').join("");
+      $("modalBody").innerHTML = (rows ? "<table>" + rows + "</table>" : "<div class='empty'>Nothing is marked done.</div>") + '<div class="empty" id="modalNote"></div>';
+      $("modalActions").innerHTML = (viewer ? '<button id="mLoad">Refresh</button>' :
+        '<button id="mPub">Publish progress (progress.json)</button><button id="mLoad">Load published</button>' + (order.length ? '<button id="mAll">Unmark all</button>' : "")) + '<button id="mClose">Close</button>';
     }
   }
   $("modal").addEventListener("click", e => {
     if (e.target.id === "modal" || e.target.id === "mClose") closeModal();
     else if (e.target.id === "mAll") unmarkAll();
+    else if (e.target.id === "mPub") publishProgress();
+    else if (e.target.id === "mLoad") loadPublished(false);
     else if (e.target.dataset && e.target.dataset.unmark) unmark(e.target.dataset.unmark);
   });
   $("mPrev").onclick = () => step(-1);
@@ -688,6 +759,9 @@ if (typeof document !== "undefined") {
     $("liveNote").textContent = !live ? "" :
       st.state === "before" ? "Plan starts in " + longDur(st.diff) :
       st.state === "after" ? "Finished " + longDur(st.diff) + " ago" : "";
+    $("viewNote").textContent = !viewer ? "" : published ?
+      "View only: progress published " + new Date(published.updated).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + " (checks every minute)" + (lastPlanUpdate ? "; plan updated " + new Date(lastPlanUpdate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "") :
+      "View only: no published progress yet";
     $("playBtn").textContent = st.playing ? "Pause" : "Play";
     slider.value = Math.round(minToPos(sim));
     $("daySel").value = sim >= 1440 ? "1440" : "0";
@@ -833,6 +907,38 @@ if (typeof document !== "undefined") {
   }, true);
 
   render();
+  if (viewer) { loadPublished(true); setInterval(() => loadPublished(true), 60000); }
+
+  // pick up changes after you push, without a full reload when only the plan data changed.
+  // Plan data (steps, ovens, burners, items) is swapped in place; changes to the page code or layout need a reload.
+  if (/^https?:/.test(location.protocol)) {
+    const hashText = t => { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return h; };
+    const parts = t => {
+      const a = t.indexOf("// ===================== DATA"), b = t.indexOf("// ===================== CORE LOGIC");
+      return a >= 0 && b > a ? { data: t.slice(a, b), rest: t.slice(0, a) + t.slice(b) } : { data: "", rest: t };
+    };
+    const swap = (cur, nw) => { cur.length = 0; nw.forEach(x => cur.push(x)); };
+    function applyData(nd) {
+      swap(TASKS, nd.TASKS); swap(OVEN_BOTTOM, nd.OVEN_BOTTOM); swap(OVEN_TOP, nd.OVEN_TOP); swap(BURNERS, nd.BURNERS); swap(ITEMS, nd.ITEMS);
+      swap(STARTS, Array.from(new Set(TASKS.filter(t => !t.bg).map(t => t.s))).sort((x, y) => x - y));
+      lastPlanUpdate = Date.now();
+      buildTicks(); buildLabels(); render();
+    }
+    let base = null;
+    const check = () => fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" }).then(r => r.text()).then(t => {
+      const p = parts(t), hd = hashText(p.data), hr = hashText(p.rest);
+      if (!base) { base = { hd: hd, hr: hr }; return; }
+      if (hr !== base.hr) { if (viewer) location.reload(); else $("updateBar").hidden = false; return; }   // page code changed
+      if (hd !== base.hd) {
+        try {
+          applyData(new Function(p.data + "; return { TASKS: TASKS, OVEN_BOTTOM: OVEN_BOTTOM, OVEN_TOP: OVEN_TOP, BURNERS: BURNERS, ITEMS: ITEMS };")());
+          base.hd = hd;
+        } catch (e) { if (viewer) location.reload(); else $("updateBar").hidden = false; }
+      }
+    }).catch(() => {});
+    $("reloadBtn").onclick = () => location.reload();
+    check(); setInterval(check, viewer ? 60000 : 120000);
+  }
 }
 
 if (typeof module !== "undefined") module.exports = { minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
