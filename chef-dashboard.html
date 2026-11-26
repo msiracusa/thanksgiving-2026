@@ -292,7 +292,7 @@ const TASKS = [
   { id: "t4", s: T(11,30), d: 70, t: "Peel and chop potatoes and soup vegetables", who: "Carmine, Dominic, Michael",
     x: "Peel and cut 8-9 lb potatoes into 2-inch chunks, in cold salted water. Soup: chop 3 onions, 9 celery stalks, about 1 lb baby carrots (sliced), 3/4 head cabbage (shredded), 6 zucchini; dice 6 potatoes (keep in water)." },
   { id: "t5", s: T(12,50), d: 25, t: "Boil the mashing potatoes", who: "Carmine",
-    x: "10 qt pot, salted water, boil 15-20 minutes until fork-tender. Burner 1." },
+    x: "10 qt pot, salted water, boil 15-20 minutes until fork-tender." },
   { id: "t6", s: T(13,15), d: 15, t: "Mash the potatoes and fill 2 dishes", who: "Carmine",
     x: "Drain and dry in the pot 1-2 min. Warm 4 sticks butter + 2-3 cups milk (microwave). Mash, adding gradually. Spread into the 9x13x1.5 and the 8x8x2.5 Pyrex, dot with butter, cover tightly with foil." },
   { id: "t6b", s: T(13,30), d: 45, t: "Set the tables (after lunch)", who: "Kaia, Issac + kids",
@@ -304,7 +304,7 @@ const TASKS = [
   { id: "t8", s: T(13,45), d: 15, t: "Turkey out of the fridge", who: "Michael",
     x: "Take the pan with both breasts out of the fridge. Do NOT rinse the turkey or add more salt; blot any wet spots. Lift the turkey (on its rack) onto a clean tray, pour out the liquid and loose salt, rinse and dry the pan and rack, then put them back and set the turkey on the rack." },
   { id: "t9", s: T(13,45), d: 15, t: "Start the soup", who: "Michael",
-    x: "16 qt pot: 1 tbsp olive oil, sauté 3 onions, garlic, parsley. Add diluted tomato paste (3 tbsp in 3 cups warm water), salt and pepper, then the vegetables and 4 1/2 qt stock. Bring to a simmer. Burner 2." },
+    x: "16 qt pot: 1 tbsp olive oil, sauté 3 onions, garlic, parsley. Add diluted tomato paste (3 tbsp in 3 cups warm water), salt and pepper, then the vegetables and 4 1/2 qt stock. Bring to a simmer." },
   { id: "t9b", s: T(14,0), d: 60, bg: true, t: "Soup simmering", who: "",
     x: "Simmer 45-60 minutes until the vegetables are tender. Stir now and then." },
   { id: "t10", s: T(14,15), d: 15, t: "Preheat the BOTTOM oven to 425F", who: "Michael",
@@ -394,13 +394,13 @@ const OVEN_TOP = [
 ];
 // slot: FL/FR = the 2 large front burners (use these first); BL/BM/BR = the 3 small back burners (only if both front burners are busy)
 const BURNERS = [
-  { s: T(12,50), e: T(13,15), slot: "FR", pot: "10 qt pot", short: "Potatoes", what: "Boiling the mashing potatoes" },
-  { s: T(13,45), e: T(15,10), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: sauté, then simmer" },
-  { s: T(14,45), e: T(15,0), slot: "FR", pot: "Large saucepan", short: "Stuffing", what: "Stuffing: celery and onion in butter" },
-  { s: T(15,45), e: T(16,5), slot: "FL", pot: "8 qt pot A", short: "Gravy", what: "Gravy" },
-  { s: T(16,0), e: T(16,30), slot: "FR", pot: "8 qt pot B", short: "Pasta", what: "Pasta water, then macaroni" },
-  { s: T(16,45), e: T(17,25), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: back to a boil, then simmer" },
-  { s: T(16,50), e: T(17,0), slot: "FR", pot: "8 qt pot B", short: "Green beans", what: "Green beans (4-5 min boil)" }
+  { tasks: ["t5"], s: T(12,50), e: T(13,15), slot: "FR", pot: "10 qt pot", short: "Potatoes", what: "Boiling the mashing potatoes" },
+  { tasks: ["t9", "t9b"], s: T(13,45), e: T(15,10), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: sauté, then simmer" },
+  { tasks: ["t12"], s: T(14,45), e: T(15,0), slot: "FR", pot: "Large saucepan", short: "Stuffing", what: "Stuffing: celery and onion in butter" },
+  { tasks: ["t17"], s: T(15,45), e: T(16,5), slot: "FL", pot: "8 qt pot A", short: "Gravy", what: "Gravy" },
+  { tasks: ["t19", "t20"], s: T(16,0), e: T(16,30), slot: "FR", pot: "8 qt pot B", short: "Pasta", what: "Pasta water, then macaroni" },
+  { tasks: ["t23", "t23b"], s: T(16,45), e: T(17,25), slot: "FL", pot: "16 qt pot", short: "Soup", what: "Soup: back to a boil, then simmer" },
+  { tasks: ["t24"], s: T(16,50), e: T(17,0), slot: "FR", pot: "8 qt pot B", short: "Green beans", what: "Green beans (4-5 min boil)" }
 ];
 // Prepared items: [from, location] in order. cat is the chip color
 const ITEMS = [
@@ -490,6 +490,12 @@ const SLIDER_LABELS = [
 const LINEAR_LABELS = [
   [W(17,0), "Wed 5 PM", "l"], [W(21,0), "Wed 9 PM", "c"], [T(1,0), "Thu 1 AM", "c"], [T(5,0), "5 AM", "c"], [T(9,0), "Thu 9 AM", "c"], [T(13,0), "1 PM", "c"], [T(17,0), "5 PM", "c"], [T(20,0), "8 PM", "r"]
 ];
+const BURNER_NUM = { BL: 1, BM: 2, BR: 3, FL: 4, FR: 5 };
+const BURNER_POS = { BL: "back left", BM: "back middle", BR: "back right", FL: "front left", FR: "front right" };
+function burnerLabel(task) {   // one source of truth: the same burner numbers as the stove diagram
+  const b = BURNERS.find(x => x.tasks && x.tasks.includes(task.id));
+  return b ? "Burner " + BURNER_NUM[b.slot] + " (" + BURNER_POS[b.slot] + ")" : "";
+}
 function segAt(list, sim) { return list.find(g => g.s <= sim && sim < g.e) || null; }
 function segNext(list, sim) { return list.filter(g => g.s > sim).sort((a, b) => a.s - b.s)[0] || null; }
 function locAt(item, sim) {
@@ -696,7 +702,7 @@ if (typeof document !== "undefined") {
   function rowHTML(t, sim, late) {
     const r = late ? "late " + durStr(sim - t.e) : durStr(t.e - sim);
     const isDone = !late && done.has(t.id);
-    return '<div class="row' + (late ? " late" : "") + (isDone ? " donerow" : "") + '"><span class="t">' + (isDone ? "\u2713 " : "") + t.t + '</span><span class="r">' + r + "</span></div>";
+    return '<div class="row' + (late ? " late" : "") + (isDone ? " donerow" : "") + '"><span class="t">' + (isDone ? "\u2713 " : "") + t.t + (burnerLabel(t) ? " [" + burnerLabel(t).replace(/ \(.*\)/, "") + "]" : "") + '</span><span class="r">' + r + "</span></div>";
   }
   function ovenHTML(name, o, sim) {
     if (o.now) {
@@ -787,11 +793,11 @@ if (typeof document !== "undefined") {
       const pDone = done.has(p.id);
       $("nowLabel").textContent = pDone ? "Done" : (p.bg ? "Now (just waiting)" : "Doing now");
       $("nowTitle").textContent = (pDone ? "\u2713 " : "") + p.t;
-      $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e) +
+      $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e) + (burnerLabel(p) ? " · " + burnerLabel(p) : "") +
         (pDone && info[p.id] ? " · done at " + new Date(info[p.id].t).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "");
       $("nowDetail").textContent = p.x;
       const together = snap.also.filter(t => !t.bg);   // other hands-on steps happening at the same time
-      $("nowAlso").textContent = together.length ? "Also now: " + together.map(t => (done.has(t.id) ? "\u2713 " : "") + t.t + " (" + durStr(t.e - sim) + ")").join("  |  ") : "";
+      $("nowAlso").textContent = together.length ? "Also now: " + together.map(t => (done.has(t.id) ? "\u2713 " : "") + t.t + (burnerLabel(t) ? " [" + burnerLabel(t).replace(/ \(.*\)/, "") + "]" : "") + " (" + durStr(t.e - sim) + ")").join("  |  ") : "";
       const left = p.e - sim, frac = clamp((sim - p.s) / (p.e - p.s), 0, 1);
       $("timer").textContent = fixedDur(left);
       $("timer").className = "";
@@ -833,7 +839,7 @@ if (typeof document !== "undefined") {
     $("ovenTopIn").innerHTML = ovenHTML("Top oven", snap.ovenTop, sim);
 
     // burners: numbered like the stove (1-3 small in back, 4-5 large in front)
-    const NUM = { BL: 1, BM: 2, BR: 3, FL: 4, FR: 5 };
+    const NUM = BURNER_NUM;
     const COL = { 1: "#ff6b6b", 2: "#ffb020", 3: "#3ecf8e", 4: "#5aa9ff", 5: "#c084fc" };
     const bySlot = {};
     snap.burners.forEach(bn => { bySlot[bn.slot] = bn; });
@@ -952,7 +958,7 @@ if (typeof document !== "undefined") {
   }
 }
 
-if (typeof module !== "undefined") module.exports = { minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
+if (typeof module !== "undefined") module.exports = { burnerLabel, minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
 </script>
 </body>
 </html>
