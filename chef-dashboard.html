@@ -67,6 +67,7 @@ main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) mi
 .row.active { background: rgba(90, 169, 255, 0.14); border-left: 3px solid var(--cold); padding-left: 0.5vw; }
 .row.active .t, .row.active .r { color: var(--cold); font-weight: 700; }
 .inner { transform-origin: top left; }
+#tzNote { font-size: clamp(10px, min(0.9vw, 1.5vh), 16px); color: var(--mute); min-height: 1.1em; }
 #viewNote { font-size: clamp(11px, min(1vw, 1.6vh), 18px); color: var(--cold); min-height: 1.1em; }
 .viewer #doneBtn, .viewer #undoBtn, .viewer #mDone { display: none; }
 #liveNote { font-size: clamp(11px, min(1.1vw, 1.7vh), 20px); color: var(--accent); margin-top: 0.3vh; min-height: 1.2em; font-variant-numeric: tabular-nums; }
@@ -175,12 +176,13 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
 <body>
 <div id="app">
   <header>
-    <div class="brand"><b id="appName">Chef Dashboard</b><br>Thanksgiving 2026<br>Dinner 5:30 PM</div>
+    <div class="brand"><b id="appName">Chef Dashboard</b><br>Thanksgiving 2026<br>Dinner 5:30 PM ET</div>
     <div class="clockbox">
       <div id="clock">--:--</div>
       <div id="day"><span id="dayText"></span><span id="modeBadge" class="live">LIVE</span></div>
       <div id="liveNote"></div>
       <div id="viewNote"></div>
+      <div id="tzNote"></div>
     </div>
     <div class="controls">
       <select id="daySel" title="Day"><option value="0">Wed</option><option value="1440" selected>Thu</option></select>
@@ -454,7 +456,11 @@ function longDur(min) {
   const d = Math.floor(total / 86400), h = Math.floor((total % 86400) / 3600), m = Math.floor((total % 3600) / 60), sec = total % 60;
   return (d > 0 ? d + "d " : "") + (d > 0 || h > 0 ? h + ":" + pad(m) + ":" + pad(sec) : pad(m) + ":" + pad(sec));
 }
-const PLAN_BASE = new Date(2026, 10, 25, 0, 0, 0).getTime();   // Wed Nov 25 2026, 12:00 AM local
+// All plan times are Eastern Time (EST, UTC-5 on these dates), whatever time zone the viewer is in.
+const PLAN_TZ = "America/New_York";
+const PLAN_BASE = Date.UTC(2026, 10, 25, 5, 0, 0);   // Wed Nov 25 2026, 12:00 AM Eastern
+const etTime = (ms, secs) => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: secs ? "2-digit" : undefined, timeZone: PLAN_TZ });
+const etDate = ms => new Date(ms).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: PLAN_TZ });
 function realNowMin(d) {
   const t = ((d ? d.getTime() : Date.now()) - PLAN_BASE) / 60000;
   if (t < RANGE_START) return { min: RANGE_START, state: "before", diff: RANGE_START - t };
@@ -674,7 +680,7 @@ if (typeof document !== "undefined") {
       $("modalActions").innerHTML = '<button id="mClose">Close</button>';
     } else {
       $("modalTitle").textContent = (viewer ? "Shared progress" : "Steps marked done") + " (" + order.length + " of " + TASKS.filter(t => !t.bg).length + ")";
-      const when = ms => new Date(ms).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      const when = ms => etTime(ms);
       const rows = order.slice().reverse().map(id => TASKS.find(t => t.id === id)).filter(Boolean).map(t =>
         '<tr><td>' + t.t + '</td><td class="k">done ' + when(info[t.id].t) + '</td><td class="k">plan ' + clockStr(t.s) + '</td>' +
         (viewer ? "" : '<td><button data-unmark="' + t.id + '">Unmark</button></td>') + '</tr>').join("");
@@ -757,11 +763,11 @@ if (typeof document !== "undefined") {
 
     if (st.mode === "live") {   // live: show the actual clock time and date, even before or after the plan
       const nowD = new Date();
-      $("clock").textContent = nowD.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" });
-      $("dayText").textContent = nowD.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+      $("clock").textContent = etTime(nowD.getTime(), true);
+      $("dayText").textContent = etDate(nowD.getTime()) + " · ET";
     } else {
       $("clock").textContent = clockStr(sim, true);
-      $("dayText").textContent = dayStr(sim) + ", Nov " + (sim >= 1440 ? 26 : 25);
+      $("dayText").textContent = dayStr(sim) + ", Nov " + (sim >= 1440 ? 26 : 25) + " · ET";
     }
     const badge = $("modeBadge");
     if (st.mode === "live") { badge.className = "live"; badge.id = "modeBadge"; badge.textContent = "LIVE"; }
@@ -772,8 +778,10 @@ if (typeof document !== "undefined") {
       st.state === "before" ? "Plan starts in " + longDur(st.diff) :
       st.state === "after" ? "Finished " + longDur(st.diff) + " ago" : "";
     $("viewNote").textContent = !viewer ? "" : published ?
-      "View only: progress published " + new Date(published.updated).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + " (checks every minute)" + (lastPlanUpdate ? "; plan updated " + new Date(lastPlanUpdate).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "") :
+      "View only: progress published " + etTime(Date.parse(published.updated)) + " ET" + " (checks every minute)" + (lastPlanUpdate ? "; plan updated " + etTime(lastPlanUpdate) + " ET" : "") :
       "View only: no published progress yet";
+    const myZone = (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone;
+    $("tzNote").textContent = myZone && myZone !== PLAN_TZ ? "Plan times are Eastern. Your clock: " + new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) + " (" + myZone + ")" : "";
     $("playBtn").textContent = st.playing ? "Pause" : "Play";
     slider.value = Math.round(minToPos(sim));
     $("daySel").value = sim >= 1440 ? "1440" : "0";
@@ -794,7 +802,7 @@ if (typeof document !== "undefined") {
       $("nowLabel").textContent = pDone ? "Done" : (p.bg ? "Now (just waiting)" : "Doing now");
       $("nowTitle").textContent = (pDone ? "\u2713 " : "") + p.t;
       $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e) + (burnerLabel(p) ? " · " + burnerLabel(p) : "") +
-        (pDone && info[p.id] ? " · done at " + new Date(info[p.id].t).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "");
+        (pDone && info[p.id] ? " · done at " + etTime(info[p.id].t) : "");
       $("nowDetail").textContent = p.x;
       const left = p.e - sim, frac = clamp((sim - p.s) / (p.e - p.s), 0, 1);
       $("timer").textContent = fixedDur(left);
@@ -955,7 +963,7 @@ if (typeof document !== "undefined") {
   }
 }
 
-if (typeof module !== "undefined") module.exports = { burnerLabel, minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
+if (typeof module !== "undefined") module.exports = { etTime, PLAN_BASE, burnerLabel, minToPos, posToMin, SCALE, TASKS, snapshot, realNowMin, STARTS, nextStart, prevStart, W, T, durStr, clockStr, OVEN_TOP, OVEN_BOTTOM, BURNERS, ITEMS };
 </script>
 </body>
 </html>
