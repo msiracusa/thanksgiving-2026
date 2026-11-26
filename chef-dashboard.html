@@ -276,7 +276,7 @@ const TASKS = [
     x: "Have in hand: aluminum-free baking powder, Morton salt, vegetable oil, basil, and the roasting pan with the stainless steel wire rack. Make room on one fridge shelf for the roasting pan (it fits once the shelf is cleared)." },
   { id: "w2", s: W(18,0), d: 20, t: "Dry brine the turkey", who: "Michael",
     x: "Pat both breasts dry. Mix 3 tbsp Morton salt + 1 tbsp aluminum-free baking powder. Shower it over ALL surfaces (top, sides, underside, rib cavity) from 6-10 inches up until well coated, not crusted. Skin side up on the wire rack in the roasting pan, UNCOVERED, on one fridge shelf. The same pan and rack are used to roast it. You will not rinse it later." },
-  { id: "w3", s: W(19,0), d: 55, t: "Toast the stuffing bread", who: "Michael",
+  { id: "w3", s: W(20,30), d: 55, t: "Toast the stuffing bread", who: "Michael",
     x: "Toast the country white bread in the toaster (6 slices per round, about 6 minutes with unloading). Cube each batch while the next one toasts. 3 loaves (about 45 slices, 27 cups of cubes) is what the stuffing needs; the 4th loaf is a spare. Bag the cubes and leave them on the counter." },
 
   { id: "t1", s: T(9,0), d: 20, t: "Dressing, glaze, and chestnuts", who: "Michael",
@@ -417,7 +417,7 @@ const ITEMS = [
   { n: "Soup (16 qt pot)", track: [[T(15,10), "Stove, covered, heat off"], [T(16,45), "Stove, reheating"], [T(17,20), "In bowls on the table"]] },
   { n: "Chestnuts", track: [[T(9,20), "Counter, scored"], [T(18,30), "Bottom oven"], [T(19,0), "Peeled, on the table"]] },
   { n: "Apple pie", track: [[W(17,0), "Fridge"], [T(18,55), "Counter, ready to cut"], [T(19,0), "On the table"]] },
-  { n: "Toasted bread cubes (27 cups)", end: T(15,30), track: [[W(19,55), "Counter, in bags"], [T(14,45), "In the stuffing mix"]] },
+  { n: "Toasted bread cubes (27 cups)", end: T(15,30), track: [[W(21,25), "Counter, in bags"], [T(14,45), "In the stuffing mix"]] },
   { n: "Salad dressing", end: T(17,25), track: [[T(9,20), "Counter, in a jar"], [T(17,20), "Tossed on the salad"]] },
   { n: "Ham glaze", end: T(17,0), track: [[T(9,20), "Counter, in a bowl"], [T(16,40), "On the hams"]] },
   { n: "Chopped celery and onion", end: T(15,0), track: [[T(11,0), "Counter, covered"], [T(14,45), "In the stuffing"]] },
@@ -460,8 +460,8 @@ function realNowMin(d) {
 // Non-linear slider: quiet stretches are squeezed and the busy Thursday afternoon gets most of the width.
 // w = share of the slider (percent). Slider positions run 0-1000.
 const SCALE = [
-  { a: W(17,0),  b: W(21,0),  w: 9 },    // Wed evening
-  { a: W(21,0),  b: T(9,0),   w: 2 },    // overnight (a big jump)
+  { a: W(17,0),  b: W(22,0),  w: 10 },   // Wed evening
+  { a: W(22,0),  b: T(9,0),   w: 1 },    // overnight (a big jump)
   { a: T(9,0),   b: T(12,30), w: 10 },   // Thu morning
   { a: T(12,30), b: T(15,0),  w: 14 },   // Thu early afternoon
   { a: T(15,0),  b: T(17,30), w: 50 },   // the intense stretch
@@ -480,7 +480,7 @@ function posToMin(pos) {
   return g.a + clamp((pos - g.p0) / (g.p1 - g.p0), 0, 1) * (g.b - g.a);
 }
 const SLIDER_LABELS = [
-  [W(17,0), "Wed 5 PM", "l"], [W(21,0), "9 PM", "r"], [T(9,0), "Thu 9 AM", "l"], [T(12,30), "12:30", "c"], [T(15,0), "3 PM", "c"],
+  [W(17,0), "Wed 5 PM", "l"], [W(22,0), "10 PM", "r"], [T(9,0), "Thu 9 AM", "l"], [T(12,30), "12:30", "c"], [T(15,0), "3 PM", "c"],
   [T(16,0), "4 PM", "c"], [T(17,0), "5 PM", "c"], [T(17,30), "Dinner", "c"], [T(20,0), "8 PM", "r"]
 ];
 const LINEAR_LABELS = [
