@@ -298,7 +298,7 @@ const TASKS = [
   { id: "t7b", s: T(13,35), d: 120, bg: true, t: "Potatoes holding hot in the top oven", who: "",
     x: "Nothing to do. They come out at 3:35 PM." },
   { id: "t8", s: T(13,45), d: 15, t: "Turkey out of the fridge", who: "Michael",
-    x: "Take the pan with both breasts out of the fridge. Blot any wet spots. Do NOT rinse and do NOT add more salt." },
+    x: "Take the pan with both breasts out of the fridge. Do NOT rinse the turkey or add more salt; blot any wet spots. Lift the turkey (on its rack) onto a clean tray, pour out the liquid and loose salt, rinse and dry the pan and rack, then put them back and set the turkey on the rack." },
   { id: "t9", s: T(13,45), d: 15, t: "Start the soup", who: "Michael",
     x: "16 qt pot: 1 tbsp olive oil, sauté 3 onions, garlic, parsley. Add diluted tomato paste (3 tbsp in 3 cups warm water), salt and pepper, then the vegetables and 4 1/2 qt stock. Bring to a simmer. Burner 2." },
   { id: "t9b", s: T(14,0), d: 60, bg: true, t: "Soup simmering", who: "",
@@ -306,7 +306,7 @@ const TASKS = [
   { id: "t10", s: T(14,15), d: 15, t: "Preheat the BOTTOM oven to 425F", who: "Michael",
     x: "Use 400F if the oven is convection. Rack in the lower-middle position." },
   { id: "t11", s: T(14,30), d: 15, t: "Turkey into the bottom oven", who: "Michael",
-    x: "Pour off any liquid that collected overnight, then add about 1 cup stock or water under the rack, add herb sprigs and orange zest strips. Brush the breasts lightly with vegetable oil. Roast skin side up at 425F." },
+    x: "Make sure the pan has been emptied and rinsed, then add about 1 cup unsalted stock or water under the rack, add herb sprigs and orange zest strips. Brush the breasts lightly with vegetable oil. Roast skin side up at 425F." },
   { id: "t11b", s: T(14,45), d: 45, bg: true, t: "Turkey roasting", who: "",
     x: "Rotate the pan halfway (about 3:10 PM). Start checking at 3:30." },
   { id: "t12", s: T(14,45), d: 40, t: "Make the stuffing", who: "Anthony + an adult",
@@ -550,7 +550,7 @@ if (typeof document !== "undefined") {
     } catch (e) {}
   } else { document.body.classList.add("viewer"); }
   // one-time: steps that were finished before the dashboard tracked them (applied once, so unmarking sticks)
-  const SEED_DONE = ["w1", "w2"];
+  const SEED_DONE = ["w1", "w2", "w3"];
   if (!viewer) {
     try {
       const seeded = JSON.parse(localStorage.getItem("tg26_seeded") || "[]");
