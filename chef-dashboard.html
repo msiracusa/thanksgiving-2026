@@ -47,6 +47,8 @@ main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) mi
 #nowCard { flex: 2.4 1 0; display: flex; flex-direction: column; border-color: var(--accent); min-height: 0; overflow: hidden; }
 #nowTitle { flex: 0 0 auto; }
 #nowTitle { font-size: calc(clamp(22px, 3.4vw, 66px) * var(--fit)); font-weight: 800; line-height: 1.05; margin: 0.4vh 0 0.6vh; }
+#nowAlso { font-size: clamp(12px, 1.25vw, 24px); color: var(--cold); margin-bottom: 0.8vh; flex: 0 0 auto; font-weight: 600; }
+#nowAlso:empty { display: none; }
 #nowMeta { font-size: clamp(12px, 1.2vw, 22px); color: var(--accent); margin-bottom: 1vh; flex: 0 0 auto; }
 #nowDetail { font-size: calc(clamp(13px, 1.6vw, 30px) * var(--fit)); line-height: 1.3; color: #d6deea; overflow: hidden; flex: 1 1 auto; min-height: 0; }
 #timerWrap { flex: 0 0 auto; padding-top: 1vh; }
@@ -63,6 +65,7 @@ main { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) mi
 .row:last-child { border-bottom: 0; }
 .row .t { color: var(--ink); } .row .r { color: var(--mute); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .row.late .t, .row.late .r { color: var(--bad); }
+.row.donerow .t, .row.donerow .r { color: var(--ok); opacity: 0.75; }
 .inner { transform-origin: top left; }
 #viewNote { font-size: clamp(11px, min(1vw, 1.6vh), 18px); color: var(--cold); min-height: 1.1em; }
 .viewer #doneBtn, .viewer #undoBtn, .viewer #mDone { display: none; }
@@ -210,6 +213,7 @@ kbd { background: var(--panel2); border: 1px solid var(--line); border-radius: 4
         <h3 id="nowLabel">Now</h3>
         <div id="nowTitle">-</div>
         <div id="nowMeta"></div>
+        <div id="nowAlso"></div>
         <div id="nowDetail"></div>
         <div id="timerWrap">
           <div class="timerrow">
@@ -504,12 +508,13 @@ function locCat(loc) {
 }
 function snapshot(sim, done) {
   const notDone = t => !done.has(t.id);
-  const active = TASKS.filter(t => t.s <= sim && sim < t.e && notDone(t));
-  const hands = active.filter(t => !t.bg);
-  const pool = hands.length ? hands : active;
   const byEnd = (a, b) => a.e - b.e || a.s - b.s;
+  const active = TASKS.filter(t => t.s <= sim && sim < t.e);   // everything scheduled now, including steps already marked done
+  const open = active.filter(notDone);
+  // prefer a hands-on step you have not finished; otherwise show the finished one so you can still see what happened
+  const pool = [open.filter(t => !t.bg), open, active.filter(t => !t.bg), active].find(l => l.length) || [];
   const primary = pool.slice().sort(byEnd)[0] || null;
-  const also = active.filter(t => t !== primary).sort(byEnd);
+  const also = active.filter(t => t !== primary).sort((a, b) => (notDone(b) - notDone(a)) || byEnd(a, b));
   const late = TASKS.filter(t => notDone(t) && !t.bg && t.e <= sim && t.e > sim - 45).sort((a, b) => a.e - b.e);
   const upcoming = TASKS.filter(t => t.s > sim && notDone(t) && !t.bg).sort((a, b) => a.s - b.s);
   const skipped = TASKS.filter(t => notDone(t) && !t.bg && t.e <= sim - 45).length;
@@ -690,7 +695,8 @@ if (typeof document !== "undefined") {
 
   function rowHTML(t, sim, late) {
     const r = late ? "late " + durStr(sim - t.e) : durStr(t.e - sim);
-    return '<div class="row' + (late ? " late" : "") + '"><span class="t">' + t.t + '</span><span class="r">' + r + "</span></div>";
+    const isDone = !late && done.has(t.id);
+    return '<div class="row' + (late ? " late" : "") + (isDone ? " donerow" : "") + '"><span class="t">' + (isDone ? "\u2713 " : "") + t.t + '</span><span class="r">' + r + "</span></div>";
   }
   function ovenHTML(name, o, sim) {
     if (o.now) {
@@ -778,16 +784,20 @@ if (typeof document !== "undefined") {
     // NOW card
     const p = snap.primary;
     if (p) {
-      $("nowLabel").textContent = p.bg ? "Now (just waiting)" : "Doing now";
-      $("nowTitle").textContent = p.t;
-      $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e);
+      const pDone = done.has(p.id);
+      $("nowLabel").textContent = pDone ? "Done" : (p.bg ? "Now (just waiting)" : "Doing now");
+      $("nowTitle").textContent = (pDone ? "\u2713 " : "") + p.t;
+      $("nowMeta").textContent = (p.who ? p.who + " · " : "") + clockStr(p.s) + " to " + clockStr(p.e) +
+        (pDone && info[p.id] ? " · done at " + new Date(info[p.id].t).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "");
       $("nowDetail").textContent = p.x;
+      const together = snap.also.filter(t => !t.bg);   // other hands-on steps happening at the same time
+      $("nowAlso").textContent = together.length ? "Also now: " + together.map(t => (done.has(t.id) ? "\u2713 " : "") + t.t + " (" + durStr(t.e - sim) + ")").join("  |  ") : "";
       const left = p.e - sim, frac = clamp((sim - p.s) / (p.e - p.s), 0, 1);
       $("timer").textContent = fixedDur(left);
       $("timer").className = "";
       $("timerLabel").textContent = "time left on this step";
       $("barFill").style.width = (frac * 100) + "%";
-      $("doneBtn").textContent = "Mark done (D)";
+      $("doneBtn").textContent = pDone ? "Done. Undo (D)" : "Mark done (D)";
       $("doneBtn").disabled = false;
     } else {
       const nx = snap.upcoming[0];
@@ -795,6 +805,7 @@ if (typeof document !== "undefined") {
       $("nowTitle").textContent = nx ? "Nothing right now" : "All done. Enjoy!";
       $("nowMeta").textContent = nx ? "Next at " + clockStr(nx.s) : "";
       $("nowDetail").textContent = nx ? "You are caught up. The next step is below." : "Every step is finished.";
+      $("nowAlso").textContent = "";
       $("timer").textContent = nx ? fixedDur(nx.s - sim + sh) : "0:00";
       $("timer").className = "";
       $("timerLabel").textContent = nx ? "until the next step starts" : "";
